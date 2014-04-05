@@ -1,6 +1,8 @@
 package ch.epfl.bigdata.ts.dataparser;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.hadoop.fs.Path;
@@ -10,7 +12,7 @@ import org.apache.hadoop.mapred.*;
 
 public class Run {
 
-    public enum Counter {
+    public static enum Counter {
         ORDER_ID
     }
 
@@ -19,14 +21,40 @@ public class Run {
         private Text word = new Text();
         private LongWritable orderID = new LongWritable();//maybe we will need fileID as well
 
+
+
         public void map(LongWritable key, Text value, OutputCollector<LongWritable, Text> output, Reporter reporter) throws IOException {
             List<String> lines = new ArrayList<String>(Arrays.asList(value.toString().split("\n")));
+            FileSplit filesplit = (FileSplit) reporter.getInputSplit();
+            String path = filesplit.getPath().getName();
+            //String a[] = path.split("/");
+            //String name = a[a.length-1];
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyymmdd");
+            Date date = new Date();
+            Calendar c = Calendar.getInstance();
+            //try {
+                int y = Integer.parseInt(path.substring(0,4));
+                int m = Integer.parseInt(path.substring(4,6));
+                int d = Integer.parseInt(path.substring(6,8));
+                c.set(y, m, d);
+               // date = sdf.parse(path);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+            long timestamp = c.getTimeInMillis();
             for (String line : lines) {
+
                 List<String> cols = new ArrayList<String>(Arrays.asList(line.split(",")));
+
+                if (cols.get(0).equals("Time")) continue;
+
+                if (cols == null || cols.size() != 8) continue;
+
                 orderID.set(Integer.parseInt(cols.get(2)));
                 char delim = ',';
                 StringBuilder builder = new StringBuilder();
-                builder.append(cols.get(0));
+             //   long ts = timestamp+Long.parseLong(cols.get(0));
+                builder.append(Long.parseLong(cols.get(0)));
                 builder.append(delim);
 //                builder.append(cols.get(2));
 //                builder.append(delim);
@@ -35,6 +63,8 @@ public class Run {
                 builder.append(cols.get(4));
                 builder.append(delim);
                 builder.append(cols.get(5));
+                builder.append(delim);
+                builder.append(path.substring(0,8));
                 word.set(builder.toString());
                 output.collect(orderID, word);
             }
@@ -56,7 +86,7 @@ public class Run {
             while (values.hasNext()) {
                 String value = values.next().toString();
                 List<String> cols = new ArrayList<String>(Arrays.asList(value.split(",")));
-                Order o = new Order(key.get(), Long.parseLong(cols.get(0)), cols.get(1).charAt(0), Long.parseLong(cols.get(2)), Long.parseLong(cols.get(3)));
+                Order o = new Order(key.get(), Long.parseLong(cols.get(0)), cols.get(1).charAt(0), Long.parseLong(cols.get(2)), Long.parseLong(cols.get(3)), cols.get(4));
                 sortedOrders.add(o);
             }
 
@@ -64,7 +94,6 @@ public class Run {
 
             long shares = 0;
             long price = 0;
-            long timestamp = 0;
 
             List<Order> tickOrders = new ArrayList<Order>();
 
@@ -74,19 +103,19 @@ public class Run {
                     price = o.getPrice();
                 } else if (o.getType() == Order.TYPE_PART_EXECUTE) {
                     shares -= o.getNumberShares();
-                    reporter.getCounter(Counter.ORDER_ID).increment(1);
+                    reporter.incrCounter(Counter.ORDER_ID, 1);
                     long tickID = reporter.getCounter(Counter.ORDER_ID).getValue();//getTickID
-                    tickOrders.add(new Order(tickID, o.getTimestamp(), 'T', o.getNumberShares(), price));
+                    tickOrders.add(new Order(tickID, o.getTimestamp(), 'T', o.getNumberShares(), price, o.date_ts));
                 } else if (o.getType() == Order.TYPE_PART_CANCEL) {
                     shares -= o.getNumberShares();
                 } else if (o.getType() == Order.TYPE_FULL_EXECUTE) {
-                    reporter.getCounter(Counter.ORDER_ID).increment(1);
+                    reporter.incrCounter(Counter.ORDER_ID, 1);
                     long tickID = reporter.getCounter(Counter.ORDER_ID).getValue();//getTickID
-                    tickOrders.add(new Order(tickID, o.getTimestamp(), 'T', shares, price));
+                    tickOrders.add(new Order(tickID, o.getTimestamp(), 'T', shares, price, o.date_ts));
                 } else if (o.getType() == Order.TYPE_NON_ORDER_EXECUTE) {
-                    reporter.getCounter(Counter.ORDER_ID).increment(1);
+                    reporter.incrCounter(Counter.ORDER_ID, 1);
                     long tickID = reporter.getCounter(Counter.ORDER_ID).getValue();//getTickID
-                    tickOrders.add(new Order(tickID, o.getTimestamp(), 'T', o.getNumberShares(), o.getPrice()));
+                    tickOrders.add(new Order(tickID, o.getTimestamp(), 'T', o.getNumberShares(), o.getPrice(), o.date_ts));
                 } else if (o.getType() == Order.TYPE_FULL_DELETE) {
                     //this should be the last order in the list
                     break;
@@ -108,7 +137,13 @@ public class Run {
 
         String intermediateDir = "/team03/tmp/" + Run.class.getSimpleName() + "-tmp";
 
+        System.out.println(args[0]);
+        System.out.println(args[1]);
+        System.out.println(args[2]);
+        System.out.println(intermediateDir);
+
         Path interMedPath = new Path(intermediateDir);
+
 
         JobConf conf = new JobConf(Run.class);
         conf.setJobName("ATS - Job1");
@@ -127,14 +162,14 @@ public class Run {
         conf.setOutputFormat(TextOutputFormat.class);
 
 
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
+        FileInputFormat.setInputPaths(conf, new Path(args[1]));
         FileOutputFormat.setOutputPath(conf, interMedPath);
 
         JobConf conf2 = new JobConf(Run2.class);
         conf2.setJobName("ATS - Job2");
 
 
-        conf2.setMapOutputKeyClass(IntWritable.class);
+        conf2.setMapOutputKeyClass(Text.class);
         conf2.setMapOutputValueClass(Text.class);
 
         conf2.setOutputKeyClass(Text.class);
@@ -148,7 +183,7 @@ public class Run {
 
 
         FileInputFormat.setInputPaths(conf2, interMedPath);
-        FileOutputFormat.setOutputPath(conf2, new Path(args[1]));
+        FileOutputFormat.setOutputPath(conf2, new Path(args[2]));
 
         JobClient jc = new JobClient(conf);
         JobClient jc2 = new JobClient(conf2);
@@ -156,9 +191,10 @@ public class Run {
         conf.setNumMapTasks(jc.getClusterStatus().getMapTasks());
         conf.setNumReduceTasks(jc.getClusterStatus().getMaxReduceTasks());
 
-        conf2.setNumMapTasks(jc2.getClusterStatus().getMaxMapTasks());
-        conf2.setNumReduceTasks(1);
 
+
+        conf2.setNumMapTasks(jc2.getClusterStatus().getMaxMapTasks());
+        conf2.setNumReduceTasks(33);
         JobClient.runJob(conf).waitForCompletion();
         JobClient.runJob(conf2);
     }

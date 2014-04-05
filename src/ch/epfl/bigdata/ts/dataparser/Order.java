@@ -20,6 +20,7 @@ public class Order implements Comparable<Order> {
     char type;
     long numberShares;
     long price;
+    String date_ts;
 
     public long getOrderID() {
         return orderID;
@@ -41,12 +42,13 @@ public class Order implements Comparable<Order> {
         return price;
     }
 
-    public Order(long orderID, long timestamp, char type, long numberShares, long price) {
+    public Order(long orderID, long timestamp, char type, long numberShares, long price, String dts) {
         this.orderID = orderID;
         this.timestamp = timestamp;
         this.type = type;
         this.numberShares = numberShares;
         this.price = price;
+        this.date_ts = dts;
     }
 
 
@@ -54,15 +56,16 @@ public class Order implements Comparable<Order> {
     public int compareTo(Order o) {
         if (this.timestamp < o.timestamp)
             return -1;
+        else if ((this.timestamp == o.timestamp) && (this.type == TYPE_BUY || this.type == TYPE_SELL)) return -1;
         return 1;
     }
 
     @Override
     public String toString() {
-        return orderID +
-                "," + timestamp +
+        return timestamp +
                 "," + type +
                 "," + numberShares +
-                "," + price;
+                "," + price+
+                ","+date_ts;
     }
 }
