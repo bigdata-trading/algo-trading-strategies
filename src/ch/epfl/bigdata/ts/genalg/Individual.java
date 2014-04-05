@@ -17,18 +17,11 @@ public class Individual{
             3. percentage for protecting gain
                 - [50..150%]
     */
-    static double INTERVAL_MIN = 600;
-    static double INTERVAL_MAX = 6000;
-    static double AVG_PERCENTAGE_MIN = 0.5;
-    static double AVG_PERCENTAGE_MAX = 1.5;
-    static double GAIN_PERCENTAGE_MIN = 0.5;
-    static double GAIN_PERCENTAGE_MAX = 1.5;
-    static double LOSS_PERCENTAGE_MIN = 0.5;
-    static double LOSS_PERCENTAGE_MAX = 1.5;
 
     static int NUMBER_OF_GENES = 4;
     private double[] genes = new double[NUMBER_OF_GENES];
-    double amount;
+    double amount = 10000;
+
 
     /*
         variables important for the trading strategy
@@ -48,13 +41,14 @@ public class Individual{
     double sellGain;
     long numberOfShares=0;
 
+    static Random r = new Random(System.currentTimeMillis());
     //Create a random individual
     public void generateIndividual(){
-        Random r = new Random(System.currentTimeMillis());
-        genes[0] = INTERVAL_MIN + (INTERVAL_MAX-INTERVAL_MIN)*r.nextDouble();
-        genes[1] = AVG_PERCENTAGE_MIN + (AVG_PERCENTAGE_MAX-AVG_PERCENTAGE_MIN)*r.nextDouble();
-        genes[2] = GAIN_PERCENTAGE_MIN + (GAIN_PERCENTAGE_MAX-GAIN_PERCENTAGE_MIN)*r.nextDouble();
-        genes[3] = LOSS_PERCENTAGE_MIN + (LOSS_PERCENTAGE_MAX-LOSS_PERCENTAGE_MIN)*r.nextDouble();
+        genes[0] = Constants.INTERVAL_MIN + (Constants.INTERVAL_MAX-Constants.INTERVAL_MIN)*r.nextDouble();
+        genes[1] = Constants.AVG_PERCENTAGE_MIN + (Constants.AVG_PERCENTAGE_MAX-Constants.AVG_PERCENTAGE_MIN)*r.nextDouble();
+        genes[2] = Constants.GAIN_PERCENTAGE_MIN + (Constants.GAIN_PERCENTAGE_MAX-Constants.GAIN_PERCENTAGE_MIN)*r.nextDouble();
+        genes[3] = Constants.LOSS_PERCENTAGE_MIN + (Constants.LOSS_PERCENTAGE_MAX-Constants.LOSS_PERCENTAGE_MIN)*r.nextDouble();
+        //System.out.println(toString());
         //initially 10.000$
         amount = 10000;
     }
@@ -100,7 +94,7 @@ public class Individual{
     }
 
     public double getFitness(){
-        return FitnessCalc.getFitness(this);
+        return amount;
     }
 
     /*
