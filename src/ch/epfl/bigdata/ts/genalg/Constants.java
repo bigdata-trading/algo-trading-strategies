@@ -22,10 +22,13 @@ public class Constants {
     public static final boolean ELITISM = true;
 
         /* population specific parameters */
-    public static final int MAX_GENERATIONS = 100;
-    public static final int MAX_INDIVIDUALS = 500;
+    public static final int MAX_GENERATIONS = 50;
+    public static final int MAX_INDIVIDUALS = 100;
     public static final int NUMBER_OF_GENES = 4;
-    public static final int STARTING_MONEY = 10000;
+    public static final int STARTING_MONEY = 100000;
+
+        /* parameters for calculating the stock parameters */
+    public static final int STOCK_INTERVAL_LENGTH = 50;
 
         /* for testing purposes */
     public static final int OVERFIT_VALUE = 0;

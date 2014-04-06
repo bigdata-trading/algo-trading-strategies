@@ -15,7 +15,6 @@ public class Individual{
     double amount = Constants.STARTING_MONEY;
     long numberOfShares=0;
 
-
     /*
         variables important for the trading strategy
      */

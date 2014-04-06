@@ -16,12 +16,16 @@ public class GA {
 
     // Create an initial population
     public static Population population = new Population(Constants.MAX_INDIVIDUALS, true);
+    public static StockParameters stock_parameters = new StockParameters();
 
 
     public static void send_values(long time,double price){
+
         for (int i=0; i<population.size(); i++){
             population.getIndividual(i).trade(time, price);
         }
+        stock_parameters.calculate(time,price);
+        //System.out.println(stock_parameters);
     }
 
     public static void main(String[] args) {
@@ -63,7 +67,7 @@ public class GA {
 
         /* testing the profit of the best individual */
         double profit = 0;
-        for (int generationCount = 0;generationCount<Constants.MAX_GENERATIONS;generationCount++){
+        for (int generationCount = 50;generationCount<Constants.MAX_GENERATIONS+50;generationCount++){
             try {
                 indiv.reset();
                 String name = "day_ticks.txt" + generationCount;
@@ -76,7 +80,7 @@ public class GA {
                 }
 
                 //System.out.println("Generation: " + generationCount + " Fittest: " + indiv.getFitness());
-                profit += Constants.STARTING_MONEY - indiv.getFitness();
+                profit +=indiv.getFitness() - Constants.STARTING_MONEY;
 
             } catch (Exception e) {
                 e.printStackTrace();
