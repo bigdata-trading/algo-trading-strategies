@@ -65,7 +65,6 @@ public class Order implements Comparable<Order> {
         return timestamp +
                 "," + type +
                 "," + numberShares +
-                "," + price+
-                ","+date_ts;
+                "," + price;
     }
 }

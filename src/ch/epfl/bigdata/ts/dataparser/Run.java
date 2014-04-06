@@ -21,7 +21,11 @@ public class Run {
         private Text word = new Text();
         private LongWritable orderID = new LongWritable();//maybe we will need fileID as well
 
+        String filename = new String();
 
+        public void configure(JobConf job) {
+            filename = job.get("map.input.file");
+        }
 
         public void map(LongWritable key, Text value, OutputCollector<LongWritable, Text> output, Reporter reporter) throws IOException {
             List<String> lines = new ArrayList<String>(Arrays.asList(value.toString().split("\n")));
@@ -33,11 +37,11 @@ public class Run {
             Date date = new Date();
             Calendar c = Calendar.getInstance();
             //try {
-                int y = Integer.parseInt(path.substring(0,4));
-                int m = Integer.parseInt(path.substring(4,6));
-                int d = Integer.parseInt(path.substring(6,8));
-                c.set(y, m, d);
-               // date = sdf.parse(path);
+            int y = Integer.parseInt(path.substring(0, 4));
+            int m = Integer.parseInt(path.substring(4, 6));
+            int d = Integer.parseInt(path.substring(6, 8));
+            c.set(y, m, d);
+            // date = sdf.parse(path);
 //            } catch (ParseException e) {
 //                e.printStackTrace();
 //            }
@@ -53,7 +57,7 @@ public class Run {
                 orderID.set(Integer.parseInt(cols.get(2)));
                 char delim = ',';
                 StringBuilder builder = new StringBuilder();
-             //   long ts = timestamp+Long.parseLong(cols.get(0));
+                //   long ts = timestamp+Long.parseLong(cols.get(0));
                 builder.append(Long.parseLong(cols.get(0)));
                 builder.append(delim);
 //                builder.append(cols.get(2));
@@ -63,8 +67,8 @@ public class Run {
                 builder.append(cols.get(4));
                 builder.append(delim);
                 builder.append(cols.get(5));
-                builder.append(delim);
-                builder.append(path.substring(0,8));
+//                builder.append(delim);
+//                builder.append(filename);
                 word.set(builder.toString());
                 output.collect(orderID, word);
             }
@@ -86,7 +90,7 @@ public class Run {
             while (values.hasNext()) {
                 String value = values.next().toString();
                 List<String> cols = new ArrayList<String>(Arrays.asList(value.split(",")));
-                Order o = new Order(key.get(), Long.parseLong(cols.get(0)), cols.get(1).charAt(0), Long.parseLong(cols.get(2)), Long.parseLong(cols.get(3)), cols.get(4));
+                Order o = new Order(key.get(), Long.parseLong(cols.get(0)), cols.get(1).charAt(0), Long.parseLong(cols.get(2)), Long.parseLong(cols.get(3)), "0");
                 sortedOrders.add(o);
             }
 
@@ -135,7 +139,7 @@ public class Run {
 
         int reduce2Tasks = 1;
 
-        String intermediateDir = "/team03/tmp/" + Run.class.getSimpleName() + "-tmp";
+        String intermediateDir = "/team03/tmp/" + Run.class.getSimpleName() + "-tmp" + args[3];
 
         System.out.println(args[0]);
         System.out.println(args[1]);
@@ -146,7 +150,7 @@ public class Run {
 
 
         JobConf conf = new JobConf(Run.class);
-        conf.setJobName("ATS - Job1");
+        conf.setJobName("ATS - Job1 " + args[3]);
 
 
         conf.setMapOutputKeyClass(LongWritable.class);
@@ -166,10 +170,10 @@ public class Run {
         FileOutputFormat.setOutputPath(conf, interMedPath);
 
         JobConf conf2 = new JobConf(Run2.class);
-        conf2.setJobName("ATS - Job2");
+        conf2.setJobName("ATS - Job2 " + args[3]);
 
 
-        conf2.setMapOutputKeyClass(Text.class);
+        conf2.setMapOutputKeyClass(IntWritable.class);
         conf2.setMapOutputValueClass(Text.class);
 
         conf2.setOutputKeyClass(Text.class);
@@ -192,9 +196,8 @@ public class Run {
         conf.setNumReduceTasks(jc.getClusterStatus().getMaxReduceTasks());
 
 
-
         conf2.setNumMapTasks(jc2.getClusterStatus().getMaxMapTasks());
-        conf2.setNumReduceTasks(33);
+        conf2.setNumReduceTasks(1);
         JobClient.runJob(conf).waitForCompletion();
         JobClient.runJob(conf2);
     }
