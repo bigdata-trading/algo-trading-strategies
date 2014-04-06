@@ -67,7 +67,6 @@ public class Individual{
         return genes[index];
     }
 
-    public double getAmount(){return amount;}
 
     public long getNumberOfShares(){return numberOfShares;}
 
@@ -91,6 +90,8 @@ public class Individual{
     }
 
     public double getFitness(){
+        amount += numberOfShares*lastPrice;
+        numberOfShares = 0;
         return amount;
     }
 

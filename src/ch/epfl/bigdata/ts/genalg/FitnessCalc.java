@@ -7,6 +7,6 @@ public class FitnessCalc{
     /* Public methods */
 
     static double getFitness(Individual individual){
-        return individual.getAmount();
+        return individual.getFitness();
     }
 }

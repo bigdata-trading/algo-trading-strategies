@@ -1,28 +1,26 @@
 package ch.epfl.bigdata.ts.genalg;
 
+import java.util.Random;
+
 /**
  * Created by dorwi on 05.04.14.
  */
 public class Algorithm{
-    /*GA parameters*/
-    private static final double uniformRate = 0.5;
-    private static final double mutationRate = 0.015;
-    private static final int tournamentSize = 5;
-    private static final boolean elitism = true;
 
+    static Random r = new Random(System.currentTimeMillis());
 	/* Public methods */
 
     public static Population evolvePopulation(Population pop){
         Population newPopulation = new Population(pop.size(),false);
 
         //keep our best individual
-        if (elitism){
+        if (Constants.ELITISM){
             newPopulation.saveIndividual(0,pop.getFittest());
         }
 
         //Crossover population
         int elitismOffset;
-        if (elitism){
+        if (Constants.ELITISM){
             elitismOffset = 1;
         } else {
             elitismOffset = 0;
@@ -49,7 +47,7 @@ public class Algorithm{
         // Loop through genes
         for (int i=0; i< indiv1.size(); i++){
             //Crossover
-            if (Math.random() <= uniformRate){
+            if (Math.random() <= Constants.UNIFORM_RATE){
                 newSol.setGene(i,indiv1.getGene(i));
             } else {
                 newSol.setGene(i,indiv2.getGene(i));
@@ -58,24 +56,20 @@ public class Algorithm{
         return newSol;
     }
 
-    //mutate and individual
+    /* mutate the genes of the individual */
     private static void mutate(Individual indiv){
-        //loop through genes
-        for (int i=0; i<indiv.size(); i++){
-            if (Math.random() <= mutationRate){
-                //create randim gene
-                byte gene = (byte) Math.round(Math.random());
-                indiv.setGene(i,gene);
-            }
+        for (int i=0; i<Constants.NUMBER_OF_GENES; i++){
+            if (r.nextDouble()<=Constants.MUTATION_RATE)
+                indiv.generate_gene(i);
         }
     }
 
     //Select individuals for crossover
     private static Individual tournamentSelection(Population pop){
         //Create a tournament population
-        Population tournament = new Population(tournamentSize,false);
+        Population tournament = new Population(Constants.TOURNAMENT_SIZE,false);
         //for each place get a random individual
-        for (int i=0; i< tournamentSize; i++){
+        for (int i=0; i< Constants.TOURNAMENT_SIZE; i++){
             int randomId = (int) (Math.random()*pop.size());
             tournament.saveIndividual(i,pop.getIndividual(randomId));
         }
