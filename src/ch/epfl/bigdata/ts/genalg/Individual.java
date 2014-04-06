@@ -2,31 +2,23 @@ package ch.epfl.bigdata.ts.genalg;
 
 import java.util.Random;
 
-/**
- * Created by dorwi on 05.04.14.
- */
 public class Individual{
     /*
         Genes:
             0. the time interval for tracking the average
-                - [600..6000s]
             1. the percentage using on average to generate the buy
-                - [50..150%]
             2. percentage for protecting loose
-                - [50..150%]
             3. percentage for protecting gain
-                - [50..150%]
     */
 
-    static int NUMBER_OF_GENES = 4;
-    private double[] genes = new double[NUMBER_OF_GENES];
-    double amount = 10000;
+    private double[] genes = new double[Constants.NUMBER_OF_GENES];
+    double amount = Constants.STARTING_MONEY;
+    long numberOfShares=0;
 
 
     /*
         variables important for the trading strategy
      */
-
     boolean openedPosition = false;
     boolean finishedInterval = false;
     boolean calculatedInterval = false;
@@ -39,22 +31,31 @@ public class Individual{
     double sum;
     double sellLoss;
     double sellGain;
-    long numberOfShares=0;
+
 
     static Random r = new Random(System.currentTimeMillis());
     //Create a random individual
     public void generateIndividual(){
-        genes[0] = Constants.INTERVAL_MIN + (Constants.INTERVAL_MAX-Constants.INTERVAL_MIN)*r.nextDouble();
-        genes[1] = Constants.AVG_PERCENTAGE_MIN + (Constants.AVG_PERCENTAGE_MAX-Constants.AVG_PERCENTAGE_MIN)*r.nextDouble();
-        genes[2] = Constants.GAIN_PERCENTAGE_MIN + (Constants.GAIN_PERCENTAGE_MAX-Constants.GAIN_PERCENTAGE_MIN)*r.nextDouble();
-        genes[3] = Constants.LOSS_PERCENTAGE_MIN + (Constants.LOSS_PERCENTAGE_MAX-Constants.LOSS_PERCENTAGE_MIN)*r.nextDouble();
-        //System.out.println(toString());
-        //initially 10.000$
-        amount = 10000;
+         for (int i=0; i<Constants.NUMBER_OF_GENES; i++){
+             generate_gene(i);
+         }
+    }
+
+    public void generate_gene(int index){
+        switch (index) {
+            case 0: genes[0] = Constants.INTERVAL_MIN + (Constants.INTERVAL_MAX-Constants.INTERVAL_MIN)*r.nextDouble();
+                break;
+            case 1: genes[1] = Constants.AVG_PERCENTAGE_MIN + (Constants.AVG_PERCENTAGE_MAX-Constants.AVG_PERCENTAGE_MIN)*r.nextDouble();
+                break;
+            case 2: genes[2] = Constants.GAIN_PERCENTAGE_MIN + (Constants.GAIN_PERCENTAGE_MAX-Constants.GAIN_PERCENTAGE_MIN)*r.nextDouble();
+                break;
+            case 3: genes[3] = Constants.LOSS_PERCENTAGE_MIN + (Constants.LOSS_PERCENTAGE_MAX-Constants.LOSS_PERCENTAGE_MIN)*r.nextDouble();
+                break;
+        }
     }
 
     public void reset(){
-        amount = 10000;
+        amount = Constants.STARTING_MONEY;
         numberOfShares = 0;
         openedPosition = false;
         finishedInterval = false;
@@ -62,10 +63,6 @@ public class Individual{
     }
 
     /*Getters and setters*/
-    public static void setNumberOfGenes(int length){
-        NUMBER_OF_GENES = length;
-    }
-
     public double getGene(int index){
         return genes[index];
     }
