@@ -13,14 +13,14 @@ import java.util.Scanner;
 public class Utils {
 
     public static final String FILE_SUFFIX = "_MSFT_tick.csv";
+    public static final String pathToInput = "";//put the absolute path to the data folder
 
     /**
-     * @param date        - format YYYYMMDD
-     * @param pathToInput - the path to where the data is with the dir separator
+     * @param date - format YYYYMMDD
      * @return
      * @throws FileNotFoundException
      */
-    public static List<Tick> readCSV(String date, String pathToInput) throws FileNotFoundException {
+    public static List<Tick> readCSV(String date) throws FileNotFoundException {
 
         List<Tick> result = new ArrayList<Tick>();
         File file = new File(pathToInput + date + FILE_SUFFIX);
