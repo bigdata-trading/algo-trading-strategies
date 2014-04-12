@@ -3,24 +3,13 @@ package ch.epfl.bigdata.ts.dataparser;
 /**
  * @author FIlip, Milos, Alexios
  */
-public class Order implements Comparable<Order> {
-
-    public final static char TYPE_BUY = 'B';
-    public final static char TYPE_SELL = 'S';
-    public final static char TYPE_PART_EXECUTE = 'E';
-    public final static char TYPE_PART_CANCEL = 'C';
-    public final static char TYPE_FULL_EXECUTE = 'F';
-    public final static char TYPE_FULL_DELETE = 'D';
-    public final static char TYPE_BULK = 'X';
-    public final static char TYPE_NON_ORDER_EXECUTE = 'T';
-
+public class Tick implements Comparable<Tick> {
 
     long orderID;
     long timestamp;
     char type;
     long numberShares;
-    long price;
-    String date_ts;
+    double price;
 
     public long getOrderID() {
         return orderID;
@@ -38,25 +27,31 @@ public class Order implements Comparable<Order> {
         return numberShares;
     }
 
-    public long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public Order(long orderID, long timestamp, char type, long numberShares, long price, String dts) {
+    public Tick(long orderID, long timestamp, char type, long numberShares, long price) {
         this.orderID = orderID;
         this.timestamp = timestamp;
         this.type = type;
         this.numberShares = numberShares;
-        this.price = price;
-        this.date_ts = dts;
+        this.price = price / 10000;
+    }
+
+    public Tick(long orderID, long timestamp, long numberShares, long price) {
+        this.orderID = orderID;
+        this.timestamp = timestamp;
+        this.numberShares = numberShares;
+        this.price = price / 10000;
     }
 
 
     @Override
-    public int compareTo(Order o) {
+    public int compareTo(Tick o) {
         if (this.timestamp < o.timestamp)
             return -1;
-        else if ((this.timestamp == o.timestamp) && (this.type == TYPE_BUY || this.type == TYPE_SELL)) return -1;
+
         return 1;
     }
 

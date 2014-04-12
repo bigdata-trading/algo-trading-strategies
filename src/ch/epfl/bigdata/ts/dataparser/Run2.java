@@ -7,6 +7,9 @@ import java.util.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
 
+/**
+ * @author Filip, Hrisafov, Milos
+ */
 public class Run2 {
 
     public static class Map2 extends MapReduceBase implements Mapper<LongWritable, Text, IntWritable, Text> {

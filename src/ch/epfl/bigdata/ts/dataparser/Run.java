@@ -9,7 +9,9 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
 
-
+/**
+ * @author Filip, Milos, Alexios
+ */
 public class Run {
 
     public static enum Counter {
