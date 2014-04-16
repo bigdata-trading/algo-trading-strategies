@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class Utils {
 
     public static final String FILE_SUFFIX = "_MSFT_tick.csv";
-    public static final String pathToInput = "";//put the absolute path to the data folder
+    public static final String pathToInput = "C:\\Dopolnitelno\\EPFL\\M2\\Big Data\\Projects\\algo-trading-strategies\\data\\";//put the absolute path to the data folder
 
     /**
      * @param date - format YYYYMMDD

@@ -43,7 +43,7 @@ public class Tick implements Comparable<Tick> {
         this.orderID = orderID;
         this.timestamp = timestamp;
         this.numberShares = numberShares;
-        this.price = price / 10000;
+        this.price = price / 10000.0;
     }
 
 
