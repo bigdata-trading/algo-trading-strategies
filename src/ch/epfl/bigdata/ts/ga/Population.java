@@ -68,7 +68,7 @@ public class Population {
 			sortPopulation();
 		}
 		
-		newElitePopulation = new ArrayList<>();
+		newElitePopulation = new ArrayList<Chromosome>();
 		for(int i = 0; i < NUM_ELITE; i++) {
 			Chromosome cur = population.get(i);
 			newPopulation.add(cur);
@@ -80,7 +80,7 @@ public class Population {
 	}
 	
 	public void crossover() {
-		List<Chromosome> parents = new ArrayList<>();		
+		List<Chromosome> parents = new ArrayList<Chromosome>();
 		int numOfCrossovers = (int) Math.floor(CROSSOVER_PROBABILITY * population.size());
 		for(int i = 0; i < numOfCrossovers; i++) {
 			int parent = Util.r.nextInt(population.size());

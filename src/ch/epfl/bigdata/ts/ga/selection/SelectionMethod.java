@@ -18,7 +18,7 @@ public abstract class SelectionMethod {
 			cur.setFitnessSelection(cur.getFitnessSelection() + prev.getFitnessSelection());
 		}
 		
-		List<Chromosome> result = new ArrayList<>();
+		List<Chromosome> result = new ArrayList<Chromosome>();
 		for(int i = 0; i < n; i++) {
 			double rVal = Util.r.nextDouble() * sum;
 			

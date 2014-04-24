@@ -7,7 +7,7 @@ import ch.epfl.bigdata.ts.ga.crossover.CrossoverMethod;
 import ch.epfl.bigdata.ts.ga.mutation.MutationMethod;
 import ch.epfl.bigdata.ts.ga.selection.SelectionMethod;
 import ch.epfl.bigdata.ts.ga.util.Util;
-import ch.epfl.data.bigdata.algorithmictrading.pattern.fitness.FitnessFunction;
+import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
 
 public class GeneticAlgorithm {
 	private static int NUM_OF_GENERATIONS = 100;

@@ -22,7 +22,7 @@ public class Constants {
     public static final boolean ELITISM = true;
 
         /* population specific parameters */
-    public static final int MAX_GENERATIONS = 50;
+    public static final int MAX_GENERATIONS = 20;
     public static final int MAX_INDIVIDUALS = 100;
     public static final int NUMBER_OF_GENES = 4;
     public static final int STARTING_MONEY = 100000;
