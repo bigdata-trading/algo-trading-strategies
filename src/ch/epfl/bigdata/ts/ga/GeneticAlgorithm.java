@@ -16,12 +16,15 @@ public class GeneticAlgorithm {
 			CrossoverMethod crossMethod, MutationMethod mutatMethod) {
 		
 		Population population = new Population(chromosomes, selMethod, crossMethod, mutatMethod, geneRange);
-		fitnessFunc.evaluate(population);
+        System.out.println("size first " + population.getChromosomes().size());
+        fitnessFunc.evaluate(population);
 		for(int i = 0; i < NUM_OF_GENERATIONS; i++) {
+            System.out.println("size before " + population.getChromosomes().size());
 			population.selection();
 			System.out.println("Iteration " + i + ", best chr: " + population.bestChromosome().getFitness());
 			population.crossover();
 			population.mutation();
+            System.out.println("size after " + population.getChromosomes().size());
 			fitnessFunc.evaluate(population);
 			//System.out.println("Population size " + population.getChromosomes().size());
 		}

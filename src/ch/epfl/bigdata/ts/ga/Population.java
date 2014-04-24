@@ -15,7 +15,7 @@ public class Population {
 	//TODO: find the best values
 	private static double SELECTIVITY = 0.5;//0.5;
 	private static int NUM_ELITE = 1; //7;
-	private static double CROSSOVER_PROBABILITY = 0.6;//0.6;
+	private static double CROSSOVER_PROBABILITY = 0.35;//0.6;
 	private static double MUTATION_PROBABILITY = 0.05;//0.01;
 	
 	private SelectionMethod selMethod;

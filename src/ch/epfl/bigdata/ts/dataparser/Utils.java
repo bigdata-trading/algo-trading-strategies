@@ -2,10 +2,8 @@ package ch.epfl.bigdata.ts.dataparser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author Filip, Milos, Alexios
@@ -13,7 +11,12 @@ import java.util.Scanner;
 public class Utils {
 
     public static final String FILE_SUFFIX = "_MSFT_tick.csv";
-    public static final String pathToInput = "C:\\Dopolnitelno\\EPFL\\M2\\Big Data\\Projects\\algo-trading-strategies\\data\\";//put the absolute path to the data folder
+    public static final String pathToInput = "C:\\Users\\Milos\\Dropbox\\epfl\\courses\\Big Data\\Project\\algo-trading-strategies\\data\\";//put the absolute path to the data folder
+
+    public static final int STARTING_YEAR = 2014;
+    public static final int STARTING_MONTH = 0;
+    public static final int STARTING_DAY = 30;
+    public static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd");
 
     /**
      * @param date - format YYYYMMDD
