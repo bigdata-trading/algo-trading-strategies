@@ -6,10 +6,6 @@ import ch.epfl.bigdata.ts.ga.Chromosome;
 
 public class RouletteWheelSelection extends SelectionMethod {
 	
-	public boolean populationSorted() {
-		return false;
-	}
-	
 	public List<Chromosome> select(List<Chromosome> population, int n) {
 		double sum = 0;
 		for(int i = 0; i < population.size(); i++) {

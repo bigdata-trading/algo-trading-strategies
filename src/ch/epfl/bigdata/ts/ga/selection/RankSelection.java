@@ -4,10 +4,7 @@ import java.util.List;
 
 import ch.epfl.bigdata.ts.ga.Chromosome;
 
-public class RankSelection extends SelectionMethod {	
-	public boolean populationSorted() {
-		return true;
-	}
+public class RankSelection extends SelectionMethod {
 	
 	public List<Chromosome> select(List<Chromosome> population, int n) {		
 		int fitness = population.size();

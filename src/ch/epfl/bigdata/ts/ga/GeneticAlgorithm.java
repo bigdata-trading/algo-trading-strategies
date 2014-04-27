@@ -10,7 +10,7 @@ import ch.epfl.bigdata.ts.ga.util.Util;
 import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
 
 public class GeneticAlgorithm {
-	private static int NUM_OF_GENERATIONS = 100;
+	private static int NUM_OF_GENERATIONS = 20;
 	
 	public static Chromosome run(List<Chromosome> chromosomes, HashMap<String, Util.Range> geneRange, FitnessFunction fitnessFunc, SelectionMethod selMethod,
 			CrossoverMethod crossMethod, MutationMethod mutatMethod) {

@@ -15,13 +15,15 @@ public class Population {
 	//TODO: find the best values
 	private static double SELECTIVITY = 0.5;//0.5;
 	private static int NUM_ELITE = 1; //7;
-	private static double CROSSOVER_PROBABILITY = 0.35;//0.6;
+	private static double CROSSOVER_PROBABILITY = 0.7;//0.6;
 	private static double MUTATION_PROBABILITY = 0.05;//0.01;
 	
 	private SelectionMethod selMethod;
 	private CrossoverMethod crossMethod;
 	private MutationMethod mutatMethod;
-	
+
+    private int maxPopulationSize;
+
 	private HashMap<String, Util.Range> geneRange;
 	
 	private List<Chromosome> population;
@@ -35,6 +37,7 @@ public class Population {
 		this.selMethod = selMethod;
 		this.crossMethod = crossMethod;
 		this.mutatMethod = mutatMethod;
+        this.maxPopulationSize = population.size();
 		this.geneRange = geneRange;
 		
 		genesPerChr = population.get(0).getNumGenes();
@@ -60,13 +63,14 @@ public class Population {
 	
 	public void selection() {		
 		List<Chromosome> newPopulation, newElitePopulation;
-		if(selMethod.populationSorted()) {
-			sortPopulation();
-			newPopulation = selMethod.select(population, (int) Math.floor(population.size() * SELECTIVITY) - NUM_ELITE);
-		} else {		
-			newPopulation = selMethod.select(population, (int) Math.floor(population.size() * SELECTIVITY) - NUM_ELITE);
-			sortPopulation();
-		}
+
+        sortPopulation();
+        //remove extra chromosomes
+        for(int i = population.size() - 1; i >= maxPopulationSize; i--) {
+            population.remove(i);
+        }
+
+		newPopulation = selMethod.select(population, (int) Math.floor(population.size() * SELECTIVITY) - NUM_ELITE);
 		
 		newElitePopulation = new ArrayList<Chromosome>();
 		for(int i = 0; i < NUM_ELITE; i++) {
