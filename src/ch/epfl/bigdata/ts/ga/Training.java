@@ -24,33 +24,33 @@ public class Training {
     public static void main(String[] args) {
 
 
-
         List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 
         //double [] values = {7, 5, 3, 1};
         //addChromosome(chromosomes, values);
+        long startTime = System.currentTimeMillis();
 
-        Random random = new Random();
+        Random random = new Random(System.currentTimeMillis());
 
-        for(int i = 0; i < NUM_OF_CHROMOSOMES; i++) {
+        for (int i = 0; i < NUM_OF_CHROMOSOMES; i++) {
 
             double bot1 = random.nextDouble() + random.nextDouble();
             double bot2 = random.nextDouble() + random.nextDouble();
-            double protSellGain = 0.25 + (0.5 - 0.25)*random.nextDouble();//range between 25 and 50 %
-            double protSellLoss = 0.15 + (0.4 - 0.15)*random.nextDouble();//range between 15 and 40 %
+            double protSellGain = 0.25 + (0.5 - 0.25) * random.nextDouble();//range between 25 and 50 %
+            double protSellLoss = 0.15 + (0.4 - 0.15) * random.nextDouble();//range between 15 and 40 %
 
 
             //double [] values0 = {12 + i, 5 + i, 23 + i, 8 + i};
             //addChromosome(chromosomes, values0);
 
-            double [] values = {bot1, bot2, protSellGain, protSellLoss};
+            double[] values = {bot1, bot2, protSellGain, protSellLoss};
             addChromosome(chromosomes, values);
         }
 
         HashMap<String, Util.Range> geneRange = new HashMap<String, Util.Range>();
         geneRange.put("a", new Util.Range(0, 2));
         geneRange.put("b", new Util.Range(0, 2));
-        geneRange.put("c", new Util.Range(0.25,0.5));
+        geneRange.put("c", new Util.Range(0.25, 0.5));
         geneRange.put("d", new Util.Range(0.15, 0.4));
 
         SelectionMethod selMethod = new RouletteWheelSelection(); //new RankSelection();
@@ -58,11 +58,15 @@ public class Training {
         MutationMethod mutatMethod = new UniformMutation();
 
         Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleBottom(15, 3000), selMethod, crossMethod, mutatMethod);
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
         System.out.println(best);
         System.out.println("Fitness: " + best.getFitness());
+        System.out.println("This took " + duration + " milliseconds");
     }
 
-    private static void addChromosome(List<Chromosome> chromosomes, double [] values) {
+    private static void addChromosome(List<Chromosome> chromosomes, double[] values) {
         List<Chromosome.Gene> genes = new ArrayList<Chromosome.Gene>();
         Chromosome chr = new Chromosome(genes);
 
