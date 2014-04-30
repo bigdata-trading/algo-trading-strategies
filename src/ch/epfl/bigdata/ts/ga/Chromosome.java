@@ -35,7 +35,7 @@ public class Chromosome {
 	}
 	
 	private List<Gene> genes; //TODO: check if HashMap of genes would be more suitable
-	private double fitness = 0, fitnessSelection = 9;
+	private double fitness = 0, fitnessSelection = 0;
 	
 	public Chromosome(List<Gene> genes) { //TODO: organize Gene and Chromosome
 		this.genes = genes;

@@ -18,7 +18,7 @@ public abstract class SelectionMethod {
 		
 		List<Chromosome> result = new ArrayList<Chromosome>();
 		for(int i = 0; i < n; i++) {
-			double rVal = Util.r.nextDouble() * sum;
+			double rVal = Util.R.nextDouble() * sum;
 			
 			for(int j = 0; j < population.size(); j++) {
 				Chromosome cur = population.get(j);

@@ -3,7 +3,7 @@ package ch.epfl.bigdata.ts.ga.util;
 import java.util.Random;
 
 public class Util {
-	public static Random r = new Random(System.currentTimeMillis());	
+	public static Random R = new Random(System.currentTimeMillis());
 	
 	public static class Range {
 		private double upper, lower;

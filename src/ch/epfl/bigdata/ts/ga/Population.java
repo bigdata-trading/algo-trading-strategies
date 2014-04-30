@@ -12,11 +12,6 @@ import ch.epfl.bigdata.ts.ga.selection.SelectionMethod;
 import ch.epfl.bigdata.ts.ga.util.Util;
 
 public class Population {
-	//TODO: find the best values
-	private static double SELECTIVITY = 0.5;//0.5;
-	private static int NUM_ELITE = 1; //7;
-	private static double CROSSOVER_PROBABILITY = 0.7;//0.6;
-	private static double MUTATION_PROBABILITY = 0.05;//0.01;
 	
 	private SelectionMethod selMethod;
 	private CrossoverMethod crossMethod;
@@ -70,10 +65,10 @@ public class Population {
             population.remove(i);
         }
 
-		newPopulation = selMethod.select(population, (int) Math.floor(population.size() * SELECTIVITY) - NUM_ELITE);
+		newPopulation = selMethod.select(population, (int) Math.floor(population.size() * GeneticAlgorithm.SELECTIVITY) - GeneticAlgorithm.NUM_ELITE);
 		
 		newElitePopulation = new ArrayList<Chromosome>();
-		for(int i = 0; i < NUM_ELITE; i++) {
+		for(int i = 0; i < GeneticAlgorithm.NUM_ELITE; i++) {
 			Chromosome cur = population.get(i);
 			newPopulation.add(cur);
 			newElitePopulation.add(new Chromosome(cur));
@@ -85,9 +80,9 @@ public class Population {
 	
 	public void crossover() {
 		List<Chromosome> parents = new ArrayList<Chromosome>();
-		int numOfCrossovers = (int) Math.floor(CROSSOVER_PROBABILITY * population.size());
+		int numOfCrossovers = (int) Math.floor(GeneticAlgorithm.CROSSOVER_PROBABILITY * population.size());
 		for(int i = 0; i < numOfCrossovers; i++) {
-			int parent = Util.r.nextInt(population.size());
+			int parent = Util.R.nextInt(population.size());
 			parents.add(population.remove(parent));
 		}
 		population.addAll(elitePopulation);
@@ -107,9 +102,9 @@ public class Population {
 	
 	public void mutation() {
 		int numOfGenes = population.size() * genesPerChr;
-		int numOfMutations = (int) Math.floor(MUTATION_PROBABILITY * numOfGenes);
+		int numOfMutations = (int) Math.floor(GeneticAlgorithm.MUTATION_PROBABILITY * numOfGenes);
 		for(int i = 0; i < numOfMutations; i++) {
-			int totalGenePos = Util.r.nextInt(numOfGenes);
+			int totalGenePos = Util.R.nextInt(numOfGenes);
 			int chrPos = totalGenePos / genesPerChr;
 			int genePos = totalGenePos % genesPerChr;
 			

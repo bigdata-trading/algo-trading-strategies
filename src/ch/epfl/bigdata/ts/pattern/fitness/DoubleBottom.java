@@ -80,7 +80,6 @@ public class DoubleBottom extends FitnessFunction {
         }
     }
 
-    @Override
     public void calcFitness(Chromosome chr) {
 
         init();
@@ -102,11 +101,12 @@ public class DoubleBottom extends FitnessFunction {
             }
 
             //sell everything
-            sell();
-            bottom1 = -1;
+            //sell();
+            //bottom1 = -1;
             i++;
 
         }
+        sell();
 
         chr.setFitness(amount);
     }

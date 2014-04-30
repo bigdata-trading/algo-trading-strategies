@@ -8,8 +8,8 @@ import ch.epfl.bigdata.ts.ga.util.Util;
 public class SinglePointCrossover implements CrossoverMethod {
 
 	public Chromosome cross(Chromosome chr1, Chromosome chr2) {
-		double pickFirstChr = Util.r.nextDouble();
-		int crossoverPoint = 1 + Util.r.nextInt(chr1.getNumGenes() - 1);
+		double pickFirstChr = Util.R.nextDouble();
+		int crossoverPoint = 1 + Util.R.nextInt(chr1.getNumGenes() - 1);
 		
 		Chromosome offspring = new Chromosome(new ArrayList<Chromosome.Gene>());
 		if(pickFirstChr < 0.5) {

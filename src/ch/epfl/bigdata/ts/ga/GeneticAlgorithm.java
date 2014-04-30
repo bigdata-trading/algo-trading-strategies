@@ -10,7 +10,12 @@ import ch.epfl.bigdata.ts.ga.util.Util;
 import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
 
 public class GeneticAlgorithm {
-	private static int NUM_OF_GENERATIONS = 20;
+    //TODO: find the best values
+    static int NUM_OF_GENERATIONS = 50;
+    static double SELECTIVITY = 0.5;//0.5;
+    static int NUM_ELITE = 9; //7;
+    static double CROSSOVER_PROBABILITY = 0.8;//0.6;
+    static double MUTATION_PROBABILITY = 0.05;//0.01;
 	
 	public static Chromosome run(List<Chromosome> chromosomes, HashMap<String, Util.Range> geneRange, FitnessFunction fitnessFunc, SelectionMethod selMethod,
 			CrossoverMethod crossMethod, MutationMethod mutatMethod) {
