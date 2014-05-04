@@ -29,6 +29,7 @@ public class DoubleTop extends FitnessFunction {
     private double buyGain;
 
     private int startingAmountOfMoney;
+    private int startingAmountOfShares;
     private int amount;
     private int numOfShares;
 
@@ -38,7 +39,7 @@ public class DoubleTop extends FitnessFunction {
 
     public DoubleTop(int numOfDays, int startingAmountOfShares) {
         this.numOfDays = numOfDays;
-        this.numOfShares = startingAmountOfShares;
+        this.startingAmountOfShares = startingAmountOfShares;
         Calendar calendar = new GregorianCalendar();
         calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
         for (int i = 0; i < numOfDays; ) {
@@ -61,7 +62,7 @@ public class DoubleTop extends FitnessFunction {
         // Year 2014, month 1 (Feb), day 21
         // numofDays = 18
         this.numOfDays = numOfDays;
-        this.numOfShares = startingAmountOfShares;
+        this.startingAmountOfShares = startingAmountOfShares;
         Calendar calendar = new GregorianCalendar();
         calendar.set(startingYear, startingMonth, startingDay);
         for (int i = 0; i < numOfDays; ) {
@@ -160,7 +161,8 @@ public class DoubleTop extends FitnessFunction {
 
         lastPrice = 0;
 
-        amount = startingAmountOfMoney;
+        numOfShares = startingAmountOfShares;
+        amount = 0;
     }
 
     private void buy() {
