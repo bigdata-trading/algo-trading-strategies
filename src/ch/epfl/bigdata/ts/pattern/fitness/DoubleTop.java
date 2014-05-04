@@ -128,7 +128,7 @@ public class DoubleTop extends FitnessFunction {
             } else if (bottom == -1) {
                 if (lastPrice > top1) {
                     top1 = lastPrice;
-                } else if ((top1 - lastprice) >= chr.getGenes().get(GENE_TOP_1).getValue()) {
+                } else if ((top1 - lastPrice) >= chr.getGenes().get(GENE_TOP_1).getValue()) {
                     bottom = lastPrice;
                 }
             } else if (top2 == -1) {
