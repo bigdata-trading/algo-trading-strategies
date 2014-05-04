@@ -36,9 +36,9 @@ public class DoubleTop extends FitnessFunction {
 
     private Map<String, List<Tick>> data = new HashMap<String, List<Tick>>();
 
-    public DoubleTop(int numOfDays, int startingAmountOfMoney) {
+    public DoubleTop(int numOfDays, int startingAmountOfShares) {
         this.numOfDays = numOfDays;
-        this.startingAmountOfMoney = startingAmountOfMoney;
+        this.numOfShares = startingAmountOfShares;
         Calendar calendar = new GregorianCalendar();
         calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
         for (int i = 0; i < numOfDays; ) {
@@ -57,11 +57,11 @@ public class DoubleTop extends FitnessFunction {
         }
     }
 
-    public DoubleTop(int numOfDays, int startingAmountOfMoney, int startingYear, int startingMonth, int startingDay) {
+    public DoubleTop(int numOfDays, int startingAmountOfShares, int startingYear, int startingMonth, int startingDay) {
         // Year 2014, month 1 (Feb), day 21
         // numofDays = 18
         this.numOfDays = numOfDays;
-        this.startingAmountOfMoney = startingAmountOfMoney;
+        this.numOfShares = startingAmountOfShares;
         Calendar calendar = new GregorianCalendar();
         calendar.set(startingYear, startingMonth, startingDay);
         for (int i = 0; i < numOfDays; ) {
@@ -106,9 +106,10 @@ public class DoubleTop extends FitnessFunction {
             i++;
 
         }
-        buy();
+//        buy();
 
-        chr.setFitness(amount);
+        //the fitness is the amount of money we have and the shares current price
+        chr.setFitness(amount + numOfShares * lastPrice);
     }
 
     private void trade(Tick transaction, Chromosome chr) {
@@ -139,8 +140,8 @@ public class DoubleTop extends FitnessFunction {
 
                     //sell
                     openPosition = true;
-                    numOfShares = (int) Math.floor(amount / lastPrice);
                     amount += numOfShares * lastPrice;
+                    numOfShares = 0;
                     double avg = top1 - bottom + top2 - bottom;
                     avg /= 2;
                     buyLoss = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
@@ -164,8 +165,8 @@ public class DoubleTop extends FitnessFunction {
 
     private void buy() {
         openPosition = false;
+        numOfShares = (int) Math.floor(amount / lastPrice);
         amount -= numOfShares * lastPrice;
-        numOfShares = 0;
         top2 = bottom = -1;
     }
 }
