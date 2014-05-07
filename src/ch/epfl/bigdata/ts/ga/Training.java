@@ -2,8 +2,11 @@ package ch.epfl.bigdata.ts.ga;
 
 import ch.epfl.bigdata.ts.ga.crossover.CrossoverMethod;
 import ch.epfl.bigdata.ts.ga.crossover.SinglePointCrossover;
+import ch.epfl.bigdata.ts.ga.crossover.TwoPointCrossover;
+import ch.epfl.bigdata.ts.ga.crossover.UniformCrossover;
 import ch.epfl.bigdata.ts.ga.mutation.MutationMethod;
 import ch.epfl.bigdata.ts.ga.mutation.UniformMutation;
+import ch.epfl.bigdata.ts.ga.selection.RankSelection;
 import ch.epfl.bigdata.ts.ga.selection.RouletteWheelSelection;
 import ch.epfl.bigdata.ts.ga.selection.SelectionMethod;
 import ch.epfl.bigdata.ts.ga.util.Util;
@@ -37,8 +40,8 @@ public class Training {
 
             double bot1 = random.nextDouble();
             double bot2 = random.nextDouble();
-            double protSellGain = 0.25 + (0.5 - 0.25) * random.nextDouble();//range between 25 and 50 %
-            double protSellLoss = 0.15 + (0.4 - 0.15) * random.nextDouble();//range between 15 and 40 %
+            double protSellGain = 0.1 + (0.5 - 0.1) * random.nextDouble();//range between 10 and 50 %
+            double protSellLoss = 0.1 + (0.3 - 0.1) * random.nextDouble();//range between 10 and 40 %
 
 
             //double [] values0 = {12 + i, 5 + i, 23 + i, 8 + i};
@@ -51,15 +54,17 @@ public class Training {
         HashMap<String, Util.Range> geneRange = new HashMap<String, Util.Range>();
         geneRange.put("a", new Util.Range(0, 1));
         geneRange.put("b", new Util.Range(0, 1));
-        geneRange.put("c", new Util.Range(0.01, 0.5));
-        geneRange.put("d", new Util.Range(0.01, 0.4));
+        geneRange.put("c", new Util.Range(0.1, 0.5));
+        geneRange.put("d", new Util.Range(0.1, 0.3));
 
-        SelectionMethod selMethod = new RouletteWheelSelection(); //new RankSelection();
-        CrossoverMethod crossMethod = new SinglePointCrossover(); //TwoPointCrossover(); UniformCrossover();
+        SelectionMethod selMethod = new RouletteWheelSelection();//new RouletteWheelSelection(); //new RankSelection();
+        CrossoverMethod crossMethod = new SinglePointCrossover(); //new SinglePointCrossover(); //TwoPointCrossover(); UniformCrossover();
         MutationMethod mutatMethod = new UniformMutation();
 
-        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleBottom(15, 3000, 1), selMethod, crossMethod, mutatMethod);
+        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleBottom(25, 3000, 1, 0), selMethod, crossMethod, mutatMethod);
 //        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleTop(15, 100), selMethod, crossMethod, mutatMethod);
+
+//        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new FitnessFunctionTest(), selMethod, crossMethod, mutatMethod);
 
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
@@ -67,6 +72,11 @@ public class Training {
         System.out.println("Fitness: " + best.getFitness());
         System.out.println("Number of transactions: " + best.getNumberOfTransactions());
         System.out.println("This took " + duration + " milliseconds");
+        Evaluate.val2[0] = best.getGenes().get(0).getValue();
+        Evaluate.val2[1] = best.getGenes().get(1).getValue();
+        Evaluate.val2[2] = best.getGenes().get(2).getValue();
+        Evaluate.val2[3] = best.getGenes().get(3).getValue();
+        Evaluate.main(null);
     }
 
     private static void addChromosome(List<Chromosome> chromosomes, double[] values) {

@@ -19,17 +19,19 @@ public class Evaluate {
     public static int NUM_OF_CHROMOSOMES = 50;
 
     public static int DOUBLE_BOT_GENE_BOT1_RANGE = 2;
+    public static double val2 []=new double[4];
 
     public static void main(String[] args) {
 
 
         List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 
-        double [] values = {0.13371815297609935, 0.2504361017996899, 0.16035202077633004, 0.10817642168462034};
+//        double [] values = {0.33165512328132774, 0.09910754279255951, 0.4356753868702625, 0.17766837209141956};
+        double [] values = val2;
         addChromosome(chromosomes, values);
         long startTime = System.currentTimeMillis();
 
-        DoubleBottom doubleBottom = new DoubleBottom(15, 3000, 15, 15);
+        DoubleBottom doubleBottom = new DoubleBottom(8, 3000, 8, 25);
 
         doubleBottom.calcFitness(chromosomes.get(0));
 
