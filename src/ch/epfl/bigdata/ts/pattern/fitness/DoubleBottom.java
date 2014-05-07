@@ -35,47 +35,22 @@ public class DoubleBottom extends FitnessFunction {
     private int numOfDays;
     private int numOfDaysInGeneration;
 
-    private int startingYear;
-    private int startingMonth;
-    private int startingDay;
     private int startForData;
-    Calendar calendar = new GregorianCalendar();
 
     private Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
 
-    public DoubleBottom(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration) {
-        this.numOfDays = numOfDays;
-        this.numOfDaysInGeneration = numOfDaysInGeneration;
-        this.startingAmountOfMoney = startingAmountOfMoney;
-        calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
-        this.startingYear = Utils.STARTING_YEAR;
-        this.startingMonth = Utils.STARTING_MONTH;
-        this.startingDay = Utils.STARTING_DAY;
-        this.startForData = 0;
-        for (int i = 0; i < numOfDays; i++) {
-            try {
-                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[i]);
-                data.put(i, ticks);
 
-            } catch (FileNotFoundException e) {
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public DoubleBottom(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startingDay) {
+    public DoubleBottom(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
         // Year 2014, month 1 (Feb), day 21
         // numofDays = 18
         this.numOfDays = numOfDays;
         this.numOfDaysInGeneration = numOfDaysInGeneration;
         this.startingAmountOfMoney = startingAmountOfMoney;
-        this.startForData = startingDay;
+        this.startForData = startForData;
         for (int i = 0; i < numOfDays; i++) {
             try {
-                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[startForData + i]);
-                data.put(startForData + i, ticks);
+                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[this.startForData + i]);
+                data.put(this.startForData + i, ticks);
 
             } catch (FileNotFoundException e) {
 
@@ -91,23 +66,12 @@ public class DoubleBottom extends FitnessFunction {
         int numberOfTransactions = 0;
 
         for (int i = 0; i < numOfDaysInGeneration; i++) {
-            //System.out.println(i);
 
             List<Tick> ticks1 = data.get(startForData + i);
-//            if (ticks1 == null) {
-//                continue;
-//            }
-//            System.out.println("Day "+Utils.SDF.format(calendar.getTime())+", amount "+amount);
 
             for (Tick tick : ticks1) {
                 numberOfTransactions += trade(tick, chr);
             }
-
-            //sell everything
-            //sell();
-            //bottom1 = -1;
-            i++;
-
         }
 //        numberOfTransactions++;
         sell();
@@ -118,7 +82,6 @@ public class DoubleBottom extends FitnessFunction {
 
     @Override
     public void increaseDay() {
-
         startForData++;
     }
 
