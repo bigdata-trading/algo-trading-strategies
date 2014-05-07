@@ -33,49 +33,54 @@ public class DoubleBottom extends FitnessFunction {
     private int numOfShares;
 
     private int numOfDays;
+    private int numOfDaysInGeneration;
 
-    private Map<String, List<Tick>> data = new HashMap<String, List<Tick>>();
+    private int startingYear;
+    private int startingMonth;
+    private int startingDay;
+    private int startForData;
+    Calendar calendar = new GregorianCalendar();
 
-    public DoubleBottom(int numOfDays, int startingAmountOfMoney) {
+    private Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
+
+    public DoubleBottom(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration) {
         this.numOfDays = numOfDays;
+        this.numOfDaysInGeneration = numOfDaysInGeneration;
         this.startingAmountOfMoney = startingAmountOfMoney;
-        Calendar calendar = new GregorianCalendar();
         calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
-        for (int i = 0; i < numOfDays; ) {
+        this.startingYear = Utils.STARTING_YEAR;
+        this.startingMonth = Utils.STARTING_MONTH;
+        this.startingDay = Utils.STARTING_DAY;
+        this.startForData = 0;
+        for (int i = 0; i < numOfDays; i++) {
             try {
-                List<Tick> ticks = Utils.readCSV(Utils.SDF.format(calendar.getTime()));
-                data.put(Utils.SDF.format(calendar.getTime()), ticks);
-                i++;
+                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[i]);
+                data.put(i, ticks);
 
             } catch (FileNotFoundException e) {
 
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                calendar.add(Calendar.DATE, 1);
             }
         }
     }
 
-    public DoubleBottom(int numOfDays, int startingAmountOfMoney, int startingYear, int startingMonth, int startingDay) {
+    public DoubleBottom(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startingDay) {
         // Year 2014, month 1 (Feb), day 21
         // numofDays = 18
         this.numOfDays = numOfDays;
+        this.numOfDaysInGeneration = numOfDaysInGeneration;
         this.startingAmountOfMoney = startingAmountOfMoney;
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(startingYear, startingMonth, startingDay);
-        for (int i = 0; i < numOfDays; ) {
+        this.startForData = startingDay;
+        for (int i = 0; i < numOfDays; i++) {
             try {
-                List<Tick> ticks = Utils.readCSV(Utils.SDF.format(calendar.getTime()));
-                data.put(Utils.SDF.format(calendar.getTime()), ticks);
-                i++;
+                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[startForData + i]);
+                data.put(startForData + i, ticks);
 
             } catch (FileNotFoundException e) {
 
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                calendar.add(Calendar.DATE, 1);
             }
         }
     }
@@ -83,21 +88,19 @@ public class DoubleBottom extends FitnessFunction {
     public void calcFitness(Chromosome chr) {
 
         init();
+        int numberOfTransactions = 0;
 
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
-        for (int i = 0; i < numOfDays; ) {
+        for (int i = 0; i < numOfDaysInGeneration; i++) {
             //System.out.println(i);
 
-            List<Tick> ticks1 = data.get(Utils.SDF.format(calendar.getTime()));
-            calendar.add(Calendar.DATE, 1);
-            if (ticks1 == null) {
-                continue;
-            }
+            List<Tick> ticks1 = data.get(startForData + i);
+//            if (ticks1 == null) {
+//                continue;
+//            }
 //            System.out.println("Day "+Utils.SDF.format(calendar.getTime())+", amount "+amount);
 
             for (Tick tick : ticks1) {
-                trade(tick, chr);
+                numberOfTransactions += trade(tick, chr);
             }
 
             //sell everything
@@ -106,22 +109,32 @@ public class DoubleBottom extends FitnessFunction {
             i++;
 
         }
+//        numberOfTransactions++;
         sell();
 
         chr.setFitness(amount);
+        chr.setNumberOfTransactions(numberOfTransactions);
+    }
+
+    @Override
+    public void increaseDay() {
+
+        startForData++;
     }
 
 
-    private void trade(Tick transaction, Chromosome chr) {
+    private int trade(Tick transaction, Chromosome chr) {
         lastPrice = transaction.getPrice();
 
         if (openPosition) {
             if (lastPrice <= sellLoss) {
                 bottom1 = lastPrice;
                 sell();
+                return 1;
             } else if (lastPrice >= sellGain) {
                 bottom1 = bottom2;
                 sell();
+                return 1;
             }
         } else {
             if (bottom1 == -1) {
@@ -137,7 +150,11 @@ public class DoubleBottom extends FitnessFunction {
                     top = lastPrice;
                 } else if ((top - lastPrice) >= chr.getGenes().get(GENE_BOTTOM_2).getValue()) {
                     bottom2 = lastPrice;
-
+                }
+            } else {
+                if (lastPrice < bottom2) {
+                    bottom2 = lastPrice;
+                } else {
                     //buy
                     openPosition = true;
                     numOfShares = (int) Math.floor(amount / lastPrice);
@@ -146,9 +163,11 @@ public class DoubleBottom extends FitnessFunction {
                     avg /= 2;
                     sellLoss = lastPrice - chr.getGenes().get(GENE_PROTECT_SELL_LOSS).getValue() * avg;
                     sellGain = lastPrice + chr.getGenes().get(GENE_PROTECT_SELL_GAIN).getValue() * avg;
+                    return 1;
                 }
             }
         }
+        return 0;
     }
 
     private void init() {

@@ -11,5 +11,10 @@ public class FitnessFunctionTest extends FitnessFunction {
 		List<Gene> genes = chr.getGenes();
 		chr.setFitness(1.0 / (1 + Math.abs(genes.get(A).getValue() + 2 * genes.get(B).getValue()
 				+ 3 * genes.get(C).getValue() + 4 * genes.get(D).getValue() - 30)));
-	}	
+	}
+
+    @Override
+    public void increaseDay() {
+
+    }
 }

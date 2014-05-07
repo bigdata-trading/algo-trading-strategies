@@ -13,7 +13,7 @@ public abstract class SelectionMethod {
 	protected List<Chromosome> throwMarble(List<Chromosome> population, int n, double sum) {
 		for(int i = 1; i < population.size(); i++) {
 			Chromosome prev = population.get(i - 1), cur = population.get(i);
-			cur.setFitnessSelection(cur.getFitnessSelection() + prev.getFitnessSelection());
+			cur.setFitnessSelection(cur.getFitness() + prev.getFitnessSelection());
 		}
 		
 		List<Chromosome> result = new ArrayList<Chromosome>();

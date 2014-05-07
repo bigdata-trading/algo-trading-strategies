@@ -34,13 +34,13 @@ public class DoubleTop extends FitnessFunction {
     private int numOfShares;
 
     private int numOfDays;
+    Calendar calendar = new GregorianCalendar();
 
     private Map<String, List<Tick>> data = new HashMap<String, List<Tick>>();
 
     public DoubleTop(int numOfDays, int startingAmountOfShares) {
         this.numOfDays = numOfDays;
         this.startingAmountOfShares = startingAmountOfShares;
-        Calendar calendar = new GregorianCalendar();
         calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
         for (int i = 0; i < numOfDays; ) {
             try {
@@ -63,7 +63,6 @@ public class DoubleTop extends FitnessFunction {
         // numofDays = 18
         this.numOfDays = numOfDays;
         this.startingAmountOfShares = startingAmountOfShares;
-        Calendar calendar = new GregorianCalendar();
         calendar.set(startingYear, startingMonth, startingDay);
         for (int i = 0; i < numOfDays; ) {
             try {
@@ -85,7 +84,6 @@ public class DoubleTop extends FitnessFunction {
 
         init();
 
-        Calendar calendar = new GregorianCalendar();
         calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
         for (int i = 0; i < numOfDays; ) {
             //System.out.println(i);
@@ -111,6 +109,16 @@ public class DoubleTop extends FitnessFunction {
 
         //the fitness is the amount of money we have and the shares current price
         chr.setFitness(amount + numOfShares * lastPrice);
+    }
+
+    @Override
+    public void increaseDay() {
+        calendar.add(Calendar.DATE, 1);
+        List<Tick> ticks1 = data.get(Utils.SDF.format(calendar.getTime()));
+        while (ticks1 == null) {
+            calendar.add(Calendar.DATE, 1);
+            ticks1 = data.get(Utils.SDF.format(calendar.getTime()));
+        }
     }
 
     private void trade(Tick transaction, Chromosome chr) {

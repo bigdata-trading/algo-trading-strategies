@@ -8,6 +8,7 @@ import ch.epfl.bigdata.ts.ga.selection.RouletteWheelSelection;
 import ch.epfl.bigdata.ts.ga.selection.SelectionMethod;
 import ch.epfl.bigdata.ts.ga.util.Util;
 import ch.epfl.bigdata.ts.pattern.fitness.DoubleBottom;
+import ch.epfl.bigdata.ts.pattern.fitness.DoubleTop;
 import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunctionTest;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.Random;
 
 public class Training {
 
-    public static int NUM_OF_CHROMOSOMES = 50;
+    public static int NUM_OF_CHROMOSOMES = 200;
 
     public static int DOUBLE_BOT_GENE_BOT1_RANGE = 2;
 
@@ -34,8 +35,8 @@ public class Training {
 
         for (int i = 0; i < NUM_OF_CHROMOSOMES; i++) {
 
-            double bot1 = random.nextDouble() + random.nextDouble();
-            double bot2 = random.nextDouble() + random.nextDouble();
+            double bot1 = random.nextDouble();
+            double bot2 = random.nextDouble();
             double protSellGain = 0.25 + (0.5 - 0.25) * random.nextDouble();//range between 25 and 50 %
             double protSellLoss = 0.15 + (0.4 - 0.15) * random.nextDouble();//range between 15 and 40 %
 
@@ -48,21 +49,23 @@ public class Training {
         }
 
         HashMap<String, Util.Range> geneRange = new HashMap<String, Util.Range>();
-        geneRange.put("a", new Util.Range(0, 2));
-        geneRange.put("b", new Util.Range(0, 2));
-        geneRange.put("c", new Util.Range(0.25, 0.5));
-        geneRange.put("d", new Util.Range(0.15, 0.4));
+        geneRange.put("a", new Util.Range(0, 1));
+        geneRange.put("b", new Util.Range(0, 1));
+        geneRange.put("c", new Util.Range(0.01, 0.5));
+        geneRange.put("d", new Util.Range(0.01, 0.4));
 
         SelectionMethod selMethod = new RouletteWheelSelection(); //new RankSelection();
         CrossoverMethod crossMethod = new SinglePointCrossover(); //TwoPointCrossover(); UniformCrossover();
         MutationMethod mutatMethod = new UniformMutation();
 
-        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleBottom(15, 3000), selMethod, crossMethod, mutatMethod);
+        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleBottom(15, 3000, 1), selMethod, crossMethod, mutatMethod);
+//        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleTop(15, 100), selMethod, crossMethod, mutatMethod);
 
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
         System.out.println(best);
         System.out.println("Fitness: " + best.getFitness());
+        System.out.println("Number of transactions: " + best.getNumberOfTransactions());
         System.out.println("This took " + duration + " milliseconds");
     }
 

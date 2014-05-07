@@ -25,11 +25,11 @@ public class Evaluate {
 
         List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 
-        double [] values = {0.5107769484443668, 0.14775158644263942, 0.3165742922259992, 1.0};
+        double [] values = {0.13371815297609935, 0.2504361017996899, 0.16035202077633004, 0.10817642168462034};
         addChromosome(chromosomes, values);
         long startTime = System.currentTimeMillis();
 
-        DoubleBottom doubleBottom = new DoubleBottom(16, 3000, 2014, 1, 25);
+        DoubleBottom doubleBottom = new DoubleBottom(15, 3000, 15, 15);
 
         doubleBottom.calcFitness(chromosomes.get(0));
 
@@ -39,6 +39,7 @@ public class Evaluate {
         long duration = endTime - startTime;
         System.out.println(best);
         System.out.println("Fitness: " + best.getFitness());
+        System.out.println("Number of transactions: " + best.getNumberOfTransactions());
         System.out.println("This took " + duration + " milliseconds");
     }
 
