@@ -26,18 +26,14 @@ public class Rectangle extends FitnessFunction {
     private double sellLoss;
     private double sellGain;
 
-    private int startingAmountOfMoney;
-    private int amount;
+    private double startingAmountOfMoney;
+    private double amount;
     private int numOfShares;
 
     private int numOfDays;
     private int numOfDaysInGeneration;
 
-    private int startingYear;
-    private int startingMonth;
-    private int startingDay;
     private int startForData;
-    Calendar calendar = new GregorianCalendar();
 
     private Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
     private boolean localUpwardTrend, globalUpwardTrend;
@@ -45,27 +41,6 @@ public class Rectangle extends FitnessFunction {
     private int globalNumTx;
     private boolean wellEstablishedTrend;
 
-    public Rectangle(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration) {
-        this.numOfDays = numOfDays;
-        this.numOfDaysInGeneration = numOfDaysInGeneration;
-        this.startingAmountOfMoney = startingAmountOfMoney;
-        calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
-        this.startingYear = Utils.STARTING_YEAR;
-        this.startingMonth = Utils.STARTING_MONTH;
-        this.startingDay = Utils.STARTING_DAY;
-        this.startForData = 0;
-        for (int i = 0; i < numOfDays; i++) {
-            try {
-                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[i]);
-                data.put(i, ticks);
-
-            } catch (FileNotFoundException e) {
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public Rectangle(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startingDay) {
         // Year 2014, month 1 (Feb), day 21
@@ -80,6 +55,8 @@ public class Rectangle extends FitnessFunction {
                 data.put(startForData + i, ticks);
 
             } catch (FileNotFoundException e) {
+                System.out.println("File not found, stacktrace: ");
+                e.printStackTrace();
 
             } catch (Exception e) {
                 e.printStackTrace();
