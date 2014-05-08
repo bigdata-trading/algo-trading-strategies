@@ -11,7 +11,7 @@ import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
 
 public class GeneticAlgorithm {
     //TODO: find the best values
-    static int NUM_OF_GENERATIONS = 120;
+    static int NUM_OF_GENERATIONS = 100 ;
     static int NUM_OF_GENERATIONS_IN_WINDOW = 4;
     static double SELECTIVITY = 0.5;//0.5;
     static int NUM_ELITE = 9; //7;

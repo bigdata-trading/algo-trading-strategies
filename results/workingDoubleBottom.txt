@@ -61,8 +61,15 @@ Fitness: 3010.5899999999974
 Number of transactions: 36
 This took 578 milliseconds
 
-Trained with 3000 USD, starting from 0 day and 5 days in generation and 20 days of training
+Trained with 3000 USD, starting from 0 day and 5 days in generation and 20 days of training Using Roulette and SinglePoint 15 days of training
 a 0.025632261337161677 b 0.1900228970807991 c 0.46556808380738546 d 0.2946468966796436
 Fitness: 3081.735000000001
 Number of transactions: 64
 This took 853 milliseconds
+
+Trained with 3000 USD, starting from 0 day and 5 days in generation and 30 days of training. Using Roulette and SinglePoint
+Evaluation starting from day 30 for 12 days
+a 0.09853211321843924 b 0.17888910925602775 c 0.4772577302806713 d 0.26221026831343863
+Fitness: 3130.679999999999
+Number of transactions: 150
+This took 824 milliseconds
