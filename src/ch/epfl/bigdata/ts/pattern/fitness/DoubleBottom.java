@@ -28,8 +28,8 @@ public class DoubleBottom extends FitnessFunction {
     private double sellLoss;
     private double sellGain;
 
-    private int startingAmountOfMoney;
-    private int amount;
+    private double startingAmountOfMoney;
+    private double amount;
     private int numOfShares;
 
     private int numOfDays;

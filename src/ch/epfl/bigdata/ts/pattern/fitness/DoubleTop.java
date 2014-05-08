@@ -28,54 +28,34 @@ public class DoubleTop extends FitnessFunction {
     private double buyLoss;
     private double buyGain;
 
-    private int startingAmountOfMoney;
+    private double startingAmountOfMoney;
     private int startingAmountOfShares;
-    private int amount;
+    private double amount;
     private int numOfShares;
 
     private int numOfDays;
-    Calendar calendar = new GregorianCalendar();
+    private int numOfDaysInGeneration;
+    private int startForData;
+    private boolean first = false;
 
-    private Map<String, List<Tick>> data = new HashMap<String, List<Tick>>();
+    private Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
 
-    public DoubleTop(int numOfDays, int startingAmountOfShares) {
-        this.numOfDays = numOfDays;
-        this.startingAmountOfShares = startingAmountOfShares;
-        calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
-        for (int i = 0; i < numOfDays; ) {
-            try {
-                List<Tick> ticks = Utils.readCSV(Utils.SDF.format(calendar.getTime()));
-                data.put(Utils.SDF.format(calendar.getTime()), ticks);
-                i++;
-
-            } catch (FileNotFoundException e) {
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                calendar.add(Calendar.DATE, 1);
-            }
-        }
-    }
-
-    public DoubleTop(int numOfDays, int startingAmountOfShares, int startingYear, int startingMonth, int startingDay) {
+    public DoubleTop(int numOfDays, int startingAmountOfShares, int numOfDaysInGeneration, int startForData) {
         // Year 2014, month 1 (Feb), day 21
         // numofDays = 18
         this.numOfDays = numOfDays;
+        this.numOfDaysInGeneration = numOfDaysInGeneration;
         this.startingAmountOfShares = startingAmountOfShares;
-        calendar.set(startingYear, startingMonth, startingDay);
-        for (int i = 0; i < numOfDays; ) {
+        this.startForData = startForData;
+        for (int i = 0; i < numOfDays; i++) {
             try {
-                List<Tick> ticks = Utils.readCSV(Utils.SDF.format(calendar.getTime()));
-                data.put(Utils.SDF.format(calendar.getTime()), ticks);
-                i++;
+                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[this.startForData + i]);
+                data.put(this.startForData + i, ticks);
 
             } catch (FileNotFoundException e) {
 
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                calendar.add(Calendar.DATE, 1);
             }
         }
     }
@@ -84,53 +64,44 @@ public class DoubleTop extends FitnessFunction {
 
         init();
 
-        calendar.set(Utils.STARTING_YEAR, Utils.STARTING_MONTH, Utils.STARTING_DAY);
-        for (int i = 0; i < numOfDays; ) {
-            //System.out.println(i);
+        int numberOfTransactions = 0;
 
-            List<Tick> ticks1 = data.get(Utils.SDF.format(calendar.getTime()));
-            calendar.add(Calendar.DATE, 1);
-            if (ticks1 == null) {
-                continue;
-            }
-//            System.out.println("Day "+Utils.SDF.format(calendar.getTime())+", amount "+amount);
+        for (int i = 0; i < numOfDaysInGeneration; i++) {
+
+            List<Tick> ticks1 = data.get(startForData + i);
 
             for (Tick tick : ticks1) {
-                trade(tick, chr);
+                numberOfTransactions += trade(tick, chr);
             }
-
-            //buy everything
-            //buy();
-            //top1 = -1
-            i++;
-
         }
-//        buy();
+//        numberOfTransactions++;
+        //buy{}
+        double profit = startingAmountOfMoney - amount + numOfShares * lastPrice;
 
-        //the fitness is the amount of money we have and the shares current price
-        chr.setFitness(amount + numOfShares * lastPrice);
+        chr.setFitness(profit);
+        chr.setNumberOfTransactions(numberOfTransactions);
     }
 
     @Override
     public void increaseDay() {
-        calendar.add(Calendar.DATE, 1);
-        List<Tick> ticks1 = data.get(Utils.SDF.format(calendar.getTime()));
-        while (ticks1 == null) {
-            calendar.add(Calendar.DATE, 1);
-            ticks1 = data.get(Utils.SDF.format(calendar.getTime()));
-        }
+        startForData++;
     }
 
-    private void trade(Tick transaction, Chromosome chr) {
+    private int trade(Tick transaction, Chromosome chr) {
         lastPrice = transaction.getPrice();
+        if (!first) {
+            startingAmountOfMoney = numOfShares * lastPrice;
+        }
 
         if (openPosition) {
             if (lastPrice <= buyLoss) {
                 top1 = lastPrice;
                 buy();
+                return 1;
             } else if (lastPrice >= buyGain) {
                 top1 = top2;
                 buy();
+                return 1;
             }
         } else {
             if (top1 == -1) {
@@ -155,9 +126,11 @@ public class DoubleTop extends FitnessFunction {
                     avg /= 2;
                     buyLoss = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
                     buyGain = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
+                    return 1;
                 }
             }
         }
+        return 0;
     }
 
     private void init() {
@@ -171,6 +144,7 @@ public class DoubleTop extends FitnessFunction {
 
         numOfShares = startingAmountOfShares;
         amount = 0;
+        first = false;
     }
 
     private void buy() {

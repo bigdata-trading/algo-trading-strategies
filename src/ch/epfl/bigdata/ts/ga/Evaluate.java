@@ -8,6 +8,7 @@ import ch.epfl.bigdata.ts.ga.selection.RouletteWheelSelection;
 import ch.epfl.bigdata.ts.ga.selection.SelectionMethod;
 import ch.epfl.bigdata.ts.ga.util.Util;
 import ch.epfl.bigdata.ts.pattern.fitness.DoubleBottom;
+import ch.epfl.bigdata.ts.pattern.fitness.DoubleTop;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +27,13 @@ public class Evaluate {
 
         List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 
-//        double [] values = {0.33165512328132774, 0.09910754279255951, 0.4356753868702625, 0.17766837209141956};
+//        double [] values = {0.029843230672834675, 0.19276892572074855, 0.44437062722782816, 0.22693963188059096};
         double [] values = val2;
         addChromosome(chromosomes, values);
         long startTime = System.currentTimeMillis();
 
-        DoubleBottom doubleBottom = new DoubleBottom(8, 3000, 8, 25);
+//        DoubleBottom doubleBottom = new DoubleBottom(10, 3000, 10, 20);
+        DoubleTop doubleBottom = new DoubleTop(10, 100, 10, 15);
 
         doubleBottom.calcFitness(chromosomes.get(0));
 

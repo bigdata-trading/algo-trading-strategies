@@ -11,7 +11,8 @@ import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
 
 public class GeneticAlgorithm {
     //TODO: find the best values
-    static int NUM_OF_GENERATIONS = 15;
+    static int NUM_OF_GENERATIONS = 50;
+    static int NUM_OF_GENERATIONS_IN_WINDOW = 5;
     static double SELECTIVITY = 0.5;//0.5;
     static int NUM_ELITE = 9; //7;
     static double CROSSOVER_PROBABILITY = 0.8;//0.6;
@@ -31,6 +32,9 @@ public class GeneticAlgorithm {
             population.mutation();
             System.out.println("size after " + population.getChromosomes().size());
             fitnessFunc.evaluate(population);
+            if ((i + 1) % NUM_OF_GENERATIONS_IN_WINDOW == 0) {
+                fitnessFunc.increaseDay();
+            }
             //System.out.println("Population size " + population.getChromosomes().size());
         }
 
