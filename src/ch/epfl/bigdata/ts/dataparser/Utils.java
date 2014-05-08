@@ -50,7 +50,16 @@ public class Utils {
             "20140313_MSFT_tick.csv",
             "20140314_MSFT_tick.csv",
             "20140317_MSFT_tick.csv",
-            "20140318_MSFT_tick.csv"};
+            "20140318_MSFT_tick.csv",
+            "20140319_MSFT_tick.csv",
+            "20140320_MSFT_tick.csv",
+            "20140321_MSFT_tick.csv",
+            "20140324_MSFT_tick.csv",
+            "20140325_MSFT_tick.csv",
+            "20140326_MSFT_tick.csv",
+            "20140327_MSFT_tick.csv",
+            "20140328_MSFT_tick.csv",
+            "20140331_MSFT_tick.csv"};
 
     /**
      * @param filename - fileName in data folder
