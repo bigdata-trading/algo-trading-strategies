@@ -61,8 +61,8 @@ public class Training {
         CrossoverMethod crossMethod = new SinglePointCrossover(); //new SinglePointCrossover(); //TwoPointCrossover(); UniformCrossover();
         MutationMethod mutatMethod = new UniformMutation();
 
-//        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleBottom(20, 3000, 5, 0), selMethod, crossMethod, mutatMethod);
-        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleBottom(15, 100, 5, 0), selMethod, crossMethod, mutatMethod);
+        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleBottom(25, 3000, 5, 0), selMethod, crossMethod, mutatMethod);
+//        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new DoubleBottom(15, 100, 5, 0), selMethod, crossMethod, mutatMethod);
 
 //        Chromosome best = GeneticAlgorithm.run(chromosomes, geneRange, new FitnessFunctionTest(), selMethod, crossMethod, mutatMethod);
 
