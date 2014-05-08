@@ -38,3 +38,25 @@ a 0.09522719492935805 b 0.20278252873609304 c 0.48421437094785824 d 0.2169034704
 Fitness: 3012.0
 Number of transactions: 52
 This took 359 milliseconds
+
+Trained with 3000 USD, starting from 15 day and 5 days in generation. Using Roulette and SinglePoint
+a 0.029843230672834675 b 0.19276892572074855 c 0.44437062722782816 d 0.22693963188059096
+Fitness: 3140.0
+Number of transactions: 156
+
+a 0.06338352975318051 b 0.14575427880647485 c 0.42847686790557693 d 0.2942993204507854
+Fitness: 3101.31
+Number of transactions: 201
+This took 866 milliseconds
+
+Trained with 3000 USD, starting from 15 day and 3 days in generation. Using Roulette and SinglePoint
+a 0.025632261337161677 b 0.1900228970807991 c 0.46556808380738546 d 0.2946468966796436
+Fitness: 3169.4899999999984
+Number of transactions: 148
+This took 777 milliseconds
+
+Trained with 3000 USD, starting from 0 day and 5 days in generation. Using Roulette and SinglePoint
+a 0.06147181418997394 b 0.25692733629731856 c 0.46844030401615144 d 0.20823821577347712
+Fitness: 3010.5899999999974
+Number of transactions: 36
+This took 578 milliseconds

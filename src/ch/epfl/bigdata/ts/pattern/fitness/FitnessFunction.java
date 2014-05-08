@@ -15,7 +15,6 @@ public abstract class FitnessFunction {
 			calcFitness(chrs.get(i));
            // System.out.println("Finished evaluating chr " + i);
 		}
-        increaseDay();
 	}
 	protected abstract void calcFitness(Chromosome chr);
 
