@@ -1,0 +1,8 @@
+Parameters range is: a 0 - 5, b - 0 - 3, c - 0.1 - 0.5, d - 0.1 - 0.3
+
+Trained with 3000 USD, starting from 0 day and 5 days in generation and 30 days of training. Using Roulette and SinglePoint
+Evaluation starting from day 31 for 11 days
+a 0.22049612600630875 b 2.167334297431192 c 0.4845600204382913 d 0.1056437381199979
+Fitness: 3009.4950000000017
+Number of transactions: 62
+This took 844 milliseconds
