@@ -27,12 +27,12 @@ public class Evaluate {
 
         List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 
-        double [] values = {0.025632261337161677, 0.1900228970807991, 0.46556808380738546, 0.2946468966796436};
-//        double [] values = val2;
+//        double [] values = {0.025632261337161677, 0.1900228970807991, 0.46556808380738546, 0.2946468966796436};
+        double [] values = val2;
         addChromosome(chromosomes, values);
         long startTime = System.currentTimeMillis();
 
-        DoubleBottom doubleBottom = new DoubleBottom(10, 3000, 10, 20);
+        DoubleBottom doubleBottom = new DoubleBottom(12, 3000, 12, 30);
 //        DoubleTop doubleBottom = new DoubleTop(7, 100, 7, 25);
 
         doubleBottom.calcFitness(chromosomes.get(0));
