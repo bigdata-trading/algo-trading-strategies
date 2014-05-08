@@ -53,6 +53,8 @@ public class DoubleBottom extends FitnessFunction {
                 data.put(this.startForData + i, ticks);
 
             } catch (FileNotFoundException e) {
+                System.out.println("File not found stacktrace: ");
+                e.printStackTrace();
 
             } catch (Exception e) {
                 e.printStackTrace();
