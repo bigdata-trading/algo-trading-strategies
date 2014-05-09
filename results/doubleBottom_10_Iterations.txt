@@ -1,0 +1,132 @@
+NUM_OF_CHROMOSOMES = 200
+ITERATION #0
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.15673239090113744 b 0.9694443515037212 c 0.4786158332965964 d 0.2815929521378816 
+Fitness: 3018.2249999999995
+Number of transactions: 22
+This took 350126 milliseconds
+Evaluation phase
+a 0.15673239090113744 b 0.9694443515037212 c 0.4786158332965964 d 0.2815929521378816 
+Fitness: 2954.25
+Number of transactions: 2
+This took 836 milliseconds
+EBD OF ITERATION #0
+
+ITERATION #1
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.15680120923206853 b 0.9063088555976629 c 0.14203048696386894 d 0.2545450403729321 
+Fitness: 3016.495
+Number of transactions: 24
+This took 282393 milliseconds
+Evaluation phase
+a 0.15680120923206853 b 0.9063088555976629 c 0.14203048696386894 d 0.2545450403729321 
+Fitness: 3052.0999999999995
+Number of transactions: 8
+This took 826 milliseconds
+EBD OF ITERATION #1
+
+ITERATION #2
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.20792594736028458 b 0.8836896701735671 c 0.48583856512005663 d 0.1941323460568064 
+Fitness: 3020.3950000000004
+Number of transactions: 18
+This took 254256 milliseconds
+Evaluation phase
+a 0.20792594736028458 b 0.8836896701735671 c 0.48583856512005663 d 0.1941323460568064 
+Fitness: 3134.84
+Number of transactions: 8
+This took 804 milliseconds
+EBD OF ITERATION #2
+
+ITERATION #3
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.173051509291257 b 0.9779752916021438 c 0.4778590324072639 d 0.22670725393527447 
+Fitness: 3016.250000000001
+Number of transactions: 24
+This took 269487 milliseconds
+Evaluation phase
+a 0.173051509291257 b 0.9779752916021438 c 0.4778590324072639 d 0.22670725393527447 
+Fitness: 3102.7100000000005
+Number of transactions: 6
+This took 1088 milliseconds
+EBD OF ITERATION #3
+
+ITERATION #4
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.1844474384951006 b 0.87836726724307 c 0.49106817125240365 d 0.24311599593613673 
+Fitness: 3016.0849999999996
+Number of transactions: 20
+This took 300391 milliseconds
+Evaluation phase
+a 0.1844474384951006 b 0.87836726724307 c 0.49106817125240365 d 0.24311599593613673 
+Fitness: 3133.6700000000005
+Number of transactions: 8
+This took 759 milliseconds
+EBD OF ITERATION #4
+
+ITERATION #5
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.19993250507225946 b 0.7252017699259629 c 0.46430571755608074 d 0.21390505758417833 
+Fitness: 3014.1800000000007
+Number of transactions: 20
+This took 355065 milliseconds
+Evaluation phase
+a 0.19993250507225946 b 0.7252017699259629 c 0.46430571755608074 d 0.21390505758417833 
+Fitness: 3031.0299999999997
+Number of transactions: 10
+This took 1311 milliseconds
+EBD OF ITERATION #5
+
+ITERATION #6
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.1686222507780073 b 0.6657859829046789 c 0.482769908853224 d 0.22940006154337866 
+Fitness: 3018.595
+Number of transactions: 20
+This took 282537 milliseconds
+Evaluation phase
+a 0.1686222507780073 b 0.6657859829046789 c 0.482769908853224 d 0.22940006154337866 
+Fitness: 3027.2500000000005
+Number of transactions: 10
+This took 810 milliseconds
+EBD OF ITERATION #6
+
+ITERATION #7
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.16439117989259266 b 0.1767260198395122 c 0.47137664426216275 d 0.12524816771498565 
+Fitness: 3022.93
+Number of transactions: 20
+This took 265786 milliseconds
+Evaluation phase
+a 0.16439117989259266 b 0.1767260198395122 c 0.47137664426216275 d 0.12524816771498565 
+Fitness: 3121.9599999999987
+Number of transactions: 122
+This took 784 milliseconds
+EBD OF ITERATION #7
+
+ITERATION #8
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.16088501512339337 b 0.5486304950203926 c 0.17621093671979954 d 0.25772265383321963 
+Fitness: 3015.6800000000007
+Number of transactions: 22
+This took 254076 milliseconds
+Evaluation phase
+a 0.16088501512339337 b 0.5486304950203926 c 0.17621093671979954 d 0.25772265383321963 
+Fitness: 2927.1699999999996
+Number of transactions: 14
+This took 774 milliseconds
+EBD OF ITERATION #8
+
+ITERATION #9
+Number of days for training: 30, starting amount of money: 3000, window for training: 5, startData for trading: 0
+a 0.20376119878290178 b 0.7378374262442391 c 0.4474171847318257 d 0.23010144575344776 
+Fitness: 3015.2850000000017
+Number of transactions: 18
+This took 254707 milliseconds
+Evaluation phase
+a 0.20376119878290178 b 0.7378374262442391 c 0.4474171847318257 d 0.23010144575344776 
+Fitness: 3024.624999999999
+Number of transactions: 10
+This took 708 milliseconds
+EBD OF ITERATION #9
+
+AVERAGE CHROMOSOME FITNESS FOR 10 iterations is: 3050.9604999999997
