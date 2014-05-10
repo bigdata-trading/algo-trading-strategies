@@ -98,6 +98,11 @@ public class Rectangle extends FitnessFunction {
         startForData++;
     }
 
+    @Override
+    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
+        return new Rectangle(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    }
+
     private int trade(Tick transaction, Chromosome chr) {
         lastPrice = transaction.getPrice();
 

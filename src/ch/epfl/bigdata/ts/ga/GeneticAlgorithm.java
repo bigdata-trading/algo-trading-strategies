@@ -6,7 +6,7 @@ import java.util.List;
 import ch.epfl.bigdata.ts.ga.crossover.CrossoverMethod;
 import ch.epfl.bigdata.ts.ga.mutation.MutationMethod;
 import ch.epfl.bigdata.ts.ga.selection.SelectionMethod;
-import ch.epfl.bigdata.ts.ga.util.Util;
+import ch.epfl.bigdata.ts.ga.util.Range;
 import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
 
 public class GeneticAlgorithm {
@@ -18,7 +18,7 @@ public class GeneticAlgorithm {
     static double CROSSOVER_PROBABILITY = 0.8;//0.6;
     static double MUTATION_PROBABILITY = 0.05;//0.01;
 
-    public static Chromosome run(List<Chromosome> chromosomes, HashMap<String, Util.Range> geneRange, FitnessFunction fitnessFunc, SelectionMethod selMethod,
+    public static Chromosome run(List<Chromosome> chromosomes, HashMap<String, Range> geneRange, FitnessFunction fitnessFunc, SelectionMethod selMethod,
                                  CrossoverMethod crossMethod, MutationMethod mutatMethod) {
 
         Population population = new Population(chromosomes, selMethod, crossMethod, mutatMethod, geneRange);

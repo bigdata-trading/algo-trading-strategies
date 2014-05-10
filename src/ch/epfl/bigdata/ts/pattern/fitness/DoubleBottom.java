@@ -3,6 +3,7 @@ package ch.epfl.bigdata.ts.pattern.fitness;
 import ch.epfl.bigdata.ts.dataparser.Tick;
 import ch.epfl.bigdata.ts.dataparser.Utils;
 import ch.epfl.bigdata.ts.ga.Chromosome;
+import ch.epfl.bigdata.ts.ga.util.Range;
 
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -152,5 +153,26 @@ public class DoubleBottom extends FitnessFunction {
         amount += numOfShares * lastPrice;
         numOfShares = 0;
         bottom2 = top = -1;
+    }
+
+
+    public static List<Range> getGeneRanges(){
+        List<Range> ranges = new LinkedList<Range>();
+
+        ranges.add(new Range(0, 1));
+        ranges.add(new Range(0, 1));
+        ranges.add(new Range(0.1, 0.5));
+        ranges.add(new Range(0.1, 0.3));
+
+        return ranges;
+    }
+
+
+    public static String getName(){
+        return "DoubleBottom";
+    }
+
+    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData){
+        return new DoubleBottom(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
     }
 }

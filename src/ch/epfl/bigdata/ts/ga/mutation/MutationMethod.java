@@ -1,8 +1,8 @@
 package ch.epfl.bigdata.ts.ga.mutation;
 
-import ch.epfl.bigdata.ts.ga.Chromosome;
-import ch.epfl.bigdata.ts.ga.util.Util;
+import ch.epfl.bigdata.ts.ga.Gene;
+import ch.epfl.bigdata.ts.ga.util.Range;
 
 public interface MutationMethod {
-	void mutate(Chromosome.Gene gene, Util.Range range);
+	void mutate(Gene gene, Range range);
 }

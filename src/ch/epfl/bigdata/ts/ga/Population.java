@@ -9,7 +9,7 @@ import java.util.List;
 import ch.epfl.bigdata.ts.ga.crossover.CrossoverMethod;
 import ch.epfl.bigdata.ts.ga.mutation.MutationMethod;
 import ch.epfl.bigdata.ts.ga.selection.SelectionMethod;
-import ch.epfl.bigdata.ts.ga.util.Util;
+import ch.epfl.bigdata.ts.ga.util.Range;
 
 public class Population {
 	
@@ -19,14 +19,14 @@ public class Population {
 
     private int maxPopulationSize;
 
-	private HashMap<String, Util.Range> geneRange;
+	private HashMap<String, Range> geneRange;
 	
 	private List<Chromosome> population;
 	private List<Chromosome> elitePopulation;
 	
 	private int genesPerChr;
 	
-	public Population(List<Chromosome> population, SelectionMethod selMethod, CrossoverMethod crossMethod, MutationMethod mutatMethod, HashMap<String, Util.Range> geneRange) {
+	public Population(List<Chromosome> population, SelectionMethod selMethod, CrossoverMethod crossMethod, MutationMethod mutatMethod, HashMap<String, Range> geneRange) {
 		//initialize chromosomes before creating Population
 		this.population = population;
 		this.selMethod = selMethod;
@@ -82,7 +82,7 @@ public class Population {
 		List<Chromosome> parents = new ArrayList<Chromosome>();
 		int numOfCrossovers = (int) Math.floor(GeneticAlgorithm.CROSSOVER_PROBABILITY * population.size());
 		for(int i = 0; i < numOfCrossovers; i++) {
-			int parent = Util.R.nextInt(population.size());
+			int parent = Range.R.nextInt(population.size());
 			parents.add(population.remove(parent));
 		}
 		population.addAll(elitePopulation);
@@ -104,7 +104,7 @@ public class Population {
 		int numOfGenes = population.size() * genesPerChr;
 		int numOfMutations = (int) Math.floor(GeneticAlgorithm.MUTATION_PROBABILITY * numOfGenes);
 		for(int i = 0; i < numOfMutations; i++) {
-			int totalGenePos = Util.R.nextInt(numOfGenes);
+			int totalGenePos = Range.R.nextInt(numOfGenes);
 			int chrPos = totalGenePos / genesPerChr;
 			int genePos = totalGenePos % genesPerChr;
 			
@@ -112,7 +112,7 @@ public class Population {
 			if(elitePopulation.contains(chr)) {
 				population.add(new Chromosome(chr));
 			}
-			Chromosome.Gene gene = chr.getGenes().get(genePos);
+			Gene gene = chr.getGenes().get(genePos);
 			mutatMethod.mutate(gene, geneRange.get(gene.getName()));
 		}
 	}

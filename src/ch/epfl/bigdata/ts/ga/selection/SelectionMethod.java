@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.bigdata.ts.ga.Chromosome;
-import ch.epfl.bigdata.ts.ga.util.Util;
+import ch.epfl.bigdata.ts.ga.util.Range;
 
 public abstract class SelectionMethod {
 	
@@ -18,7 +18,7 @@ public abstract class SelectionMethod {
 		
 		List<Chromosome> result = new ArrayList<Chromosome>();
 		for(int i = 0; i < n; i++) {
-			double rVal = Util.R.nextDouble() * sum;
+			double rVal = Range.R.nextDouble() * sum;
 			
 			for(int j = 0; j < population.size(); j++) {
 				Chromosome cur = population.get(j);

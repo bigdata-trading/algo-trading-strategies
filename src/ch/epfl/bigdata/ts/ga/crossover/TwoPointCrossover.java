@@ -1,18 +1,18 @@
 package ch.epfl.bigdata.ts.ga.crossover;
 
 import java.util.ArrayList;
-
 import ch.epfl.bigdata.ts.ga.Chromosome;
-import ch.epfl.bigdata.ts.ga.util.Util;
+import ch.epfl.bigdata.ts.ga.Gene;
+import ch.epfl.bigdata.ts.ga.util.Range;
 
 public class TwoPointCrossover implements CrossoverMethod {
 	public Chromosome cross(Chromosome chr1, Chromosome chr2) {
-		double pickFirstChr = Util.R.nextDouble();
-		int crossoverPoint1 = 1 + Util.R.nextInt(chr1.getNumGenes() - 1);
-		int crossoverPoint2 = 1 + Util.R.nextInt(chr1.getNumGenes() - 1);
+		double pickFirstChr = Range.R.nextDouble();
+		int crossoverPoint1 = 1 + Range.R.nextInt(chr1.getNumGenes() - 1);
+		int crossoverPoint2 = 1 + Range.R.nextInt(chr1.getNumGenes() - 1);
 		
 		while(crossoverPoint2 == crossoverPoint1) {
-			crossoverPoint2 = 1 + Util.R.nextInt(chr1.getNumGenes() - 1);
+			crossoverPoint2 = 1 + Range.R.nextInt(chr1.getNumGenes() - 1);
 		}
 		
 		if(crossoverPoint1 > crossoverPoint2) {
@@ -21,7 +21,7 @@ public class TwoPointCrossover implements CrossoverMethod {
 			crossoverPoint2 = tmp;
 		}
 		
-		Chromosome offspring = new Chromosome(new ArrayList<Chromosome.Gene>());
+		Chromosome offspring = new Chromosome(new ArrayList<Gene>());
 		if(pickFirstChr < 0.5) {
 			//first is chr1
 			chr1.copyGenes(0, crossoverPoint1, offspring);

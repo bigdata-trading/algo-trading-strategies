@@ -87,6 +87,11 @@ public class DoubleTop extends FitnessFunction {
         startForData++;
     }
 
+    @Override
+    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
+        return new DoubleTop(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    }
+
     private int trade(Tick transaction, Chromosome chr) {
         lastPrice = transaction.getPrice();
         if (!first) {
