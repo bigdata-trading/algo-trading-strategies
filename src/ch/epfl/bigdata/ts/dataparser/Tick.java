@@ -51,6 +51,8 @@ public class Tick implements Comparable<Tick> {
     public int compareTo(Tick o) {
         if (this.timestamp < o.timestamp)
             return -1;
+        else if (this.timestamp==o.timestamp)
+             return  0;
 
         return 1;
     }
