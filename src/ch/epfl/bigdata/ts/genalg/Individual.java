@@ -3,33 +3,37 @@ package ch.epfl.bigdata.ts.genalg;
 import java.util.Random;
 
 public class Individual{
-    /*
-        Genes:
-            0. the time interval for tracking the average
-            1. the percentage using on average to generate the buy
-            2. percentage for protecting loose
-            3. percentage for protecting gain
-    */
+
+    private static int NUM_OF_CHROMOSOMES = 200;
+    public static int NUM_OF_ITERATIONS = 10;
+
+
+    public static final int GENE_BOTTOM_1 = 0;
+    public static final int GENE_BOTTOM_2 = 1;
+    public static final int GENE_PROTECT_SELL_GAIN = 2;
+    public static final int GENE_PROTECT_SELL_LOSS = 3;
+    public static final int GENE_TREND_STRENGTH = 4;
 
     private double[] genes = new double[Constants.NUMBER_OF_GENES];
-    double amount = Constants.STARTING_MONEY;
-    long numberOfShares=0;
 
     /*
         variables important for the trading strategy
      */
-    boolean openedPosition = false;
-    boolean finishedInterval = false;
-    boolean calculatedInterval = false;
-    double lastPrice;
-    double priceBuy;
-    long intervalBegin;
-    long intervalEnd;
-    double avg;
-    long count;
-    double sum;
-    double sellLoss;
-    double sellGain;
+    private double bottom1;
+    private double bottom2;
+    private double top;
+
+    private boolean openPosition = false;
+
+    private double lastPrice;
+
+    private double sellLoss;
+    private double sellGain;
+
+    private double amount;
+    private int numOfShares;
+
+
 
 
     static Random r = new Random(System.currentTimeMillis());
@@ -42,9 +46,9 @@ public class Individual{
 
     public void generate_gene(int index){
         switch (index) {
-            case 0: genes[0] = Constants.INTERVAL_MIN + (Constants.INTERVAL_MAX-Constants.INTERVAL_MIN)*r.nextDouble();
+            case 0: genes[0] = Constants.BOT1_MIN + (Constants.BOT1_MAX-Constants.BOT1_MIN)*r.nextDouble();
                 break;
-            case 1: genes[1] = Constants.AVG_PERCENTAGE_MIN + (Constants.AVG_PERCENTAGE_MAX-Constants.AVG_PERCENTAGE_MIN)*r.nextDouble();
+            case 1: genes[1] = Constants.TOP_MIN + (Constants.TOP_MAX-Constants.TOP_MIN)*r.nextDouble();
                 break;
             case 2: genes[2] = Constants.GAIN_PERCENTAGE_MIN + (Constants.GAIN_PERCENTAGE_MAX-Constants.GAIN_PERCENTAGE_MIN)*r.nextDouble();
                 break;
@@ -54,11 +58,15 @@ public class Individual{
     }
 
     public void reset(){
+        bottom1 = -1;
+        bottom2 = -1;
+        top = -1;
+
+        openPosition = false;
+
+        lastPrice = 0;
+
         amount = Constants.STARTING_MONEY;
-        numberOfShares = 0;
-        openedPosition = false;
-        finishedInterval = false;
-        calculatedInterval = false;
     }
 
     /*Getters and setters*/
@@ -67,7 +75,6 @@ public class Individual{
     }
 
 
-    public long getNumberOfShares(){return numberOfShares;}
 
     public double getLastPrice(){return lastPrice;}
 
@@ -75,9 +82,6 @@ public class Individual{
         amount = value;
     }
 
-    public void setNumberOfShares(int value){
-        numberOfShares = value;
-    }
 
     public void setGene(int index, double value){
         genes[index] = value;
@@ -89,9 +93,7 @@ public class Individual{
     }
 
     public double getFitness(){
-        amount += numberOfShares*lastPrice;
-        numberOfShares = 0;
-        return amount;
+        return amount + numOfShares*lastPrice;
     }
 
     /*
@@ -101,51 +103,67 @@ public class Individual{
      * if the price is below genes[2]*avg, then sell
      * if the price is above genes[3]*avg, then sell
     * */
-    public void trade(long time,double price){
+
+     public void trade(long time,double price){
         lastPrice = price;
-        if (openedPosition){
-            if (price<sellLoss){
-                sell(price);
+
+        if (openPosition) {
+            if (lastPrice <= sellLoss) {
+                bottom1 = lastPrice;
+                sell();
+                //return 1;
+            } else if (lastPrice >= sellGain) {
+                bottom1 = bottom2;
+                sell();
+                //return 1;
             }
-            if (price>sellGain){
-                sell(price);
-            }
-        } else{
-            if (!calculatedInterval){
-                calculatedInterval = true;
-                finishedInterval = false;
-                intervalBegin = time;
-                intervalEnd = time + (int)Math.floor(genes[0]);
-                count = 1;
-                sum = price;
-            } else if (finishedInterval){
-                if (price<priceBuy){
-                    buy(price);
+        } else {
+            if (bottom1 == -1) {
+                bottom1 = lastPrice;
+            } else if (top == -1) {
+                if (lastPrice < bottom1) {
+                    bottom1 = lastPrice;
+                } else if ((lastPrice - bottom1) >= genes[GENE_BOTTOM_1]) {
+                    top = lastPrice;
                 }
-            } else if (time > intervalEnd){
-                finishedInterval = true;
-                avg = sum/count;
-                priceBuy = genes[1]*avg;
+            } else if (bottom2 == -1) {
+                if (lastPrice > top) {
+                    top = lastPrice;
+                } else if ((top - lastPrice) >= genes[GENE_BOTTOM_2]) {
+                    bottom2 = lastPrice;
+                }
             } else {
-                count++;
-                sum+=price;
+                if (lastPrice < bottom2) {
+                    bottom2 = lastPrice;
+                } else {
+                    //buy
+                    openPosition = true;
+                    numOfShares = (int) Math.floor(amount / lastPrice);
+                    amount -= numOfShares * lastPrice;
+                    double avg = top - bottom1 + top - bottom2;
+                    avg /= 2;
+                    sellLoss = lastPrice - genes[GENE_PROTECT_SELL_LOSS] * avg;
+                    sellGain = lastPrice + genes[GENE_PROTECT_SELL_GAIN] * avg;
+                    //return 1;
+                }
             }
         }
+
     }
 
-    public void buy(double price){
-        openedPosition = true;
-        sellLoss = genes[2]*avg;
-        sellGain = genes[3]*avg;
+    /*
+    public void buy(){
+        openPosition = true;
         numberOfShares = (int)Math.floor(amount/price);
         amount -= numberOfShares*price;
     }
+    */
 
-    public void sell(double price){
-        openedPosition = false;
-        calculatedInterval = false;
-        amount += numberOfShares*price;
-        numberOfShares = 0;
+    public void sell(){
+        openPosition = false;
+        amount += numOfShares * lastPrice;
+        numOfShares = 0;
+        bottom2 = top = -1;
     }
 
     @Override
