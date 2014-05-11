@@ -110,6 +110,9 @@ public class DoubleBottom extends FitnessFunction {
             vizLog.append("," + sold);
             vizLog.append("," + sellGain);
             vizLog.append("," + sellLoss);
+            if (sold == 1 || bought == 1 || order == 0){
+                vizLog.append("," + amount + "," + numOfShares);
+            }
             vizLog.append("\n");
         }
 
