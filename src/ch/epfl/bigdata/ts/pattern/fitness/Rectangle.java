@@ -64,7 +64,7 @@ public class Rectangle extends FitnessFunction {
         }
     }
 
-    public void calcFitness(Chromosome chr) {
+    public void calcFitness(Chromosome chr, boolean logForViz) {
         init();
         int numberOfTransactions = 0;
 
@@ -96,6 +96,11 @@ public class Rectangle extends FitnessFunction {
 
     public void increaseDay() {
         startForData++;
+    }
+
+    @Override
+    public String getName() {
+        return "Rectangle";
     }
 
     @Override

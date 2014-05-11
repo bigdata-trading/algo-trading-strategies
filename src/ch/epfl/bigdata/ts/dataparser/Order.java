@@ -22,6 +22,11 @@ public class Order implements Comparable<Order> {
     long price;
     String date_ts;
 
+    // needed for Run3.java in order not to rehash
+    public void setNumberShares(final long numberShares) {
+        this.numberShares = numberShares;
+    }
+
     public long getOrderID() {
         return orderID;
     }

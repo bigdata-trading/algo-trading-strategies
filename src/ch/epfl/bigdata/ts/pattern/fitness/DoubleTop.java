@@ -60,7 +60,7 @@ public class DoubleTop extends FitnessFunction {
         }
     }
 
-    public void calcFitness(Chromosome chr) {
+    public void calcFitness(Chromosome chr, boolean logForViz) {
 
         init();
 
@@ -85,6 +85,11 @@ public class DoubleTop extends FitnessFunction {
     @Override
     public void increaseDay() {
         startForData++;
+    }
+
+    @Override
+    public String getName() {
+        return "DoubleTop";
     }
 
     @Override
