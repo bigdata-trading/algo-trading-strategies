@@ -1,10 +1,9 @@
 package ch.epfl.bigdata.ts.pattern.fitness;
 
 import ch.epfl.bigdata.ts.dataparser.Tick;
-import ch.epfl.bigdata.ts.dataparser.Utils;
 import ch.epfl.bigdata.ts.ga.Chromosome;
+import ch.epfl.bigdata.ts.ga.util.Range;
 
-import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Rectangle extends FitnessFunction {
@@ -18,100 +17,27 @@ public class Rectangle extends FitnessFunction {
     private double bottom1, bottom2;
     private double top1, top2;
 
-
-    private boolean openPosition = false;
-
-    private double lastPrice;
-
     private double sellLoss;
     private double sellGain;
 
-    private double startingAmountOfMoney;
-    private double amount;
-    private int numOfShares;
-
-    private int numOfDays;
-    private int numOfDaysInGeneration;
-
-    private int startForData;
-
-    private Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
-    private boolean localUpwardTrend, globalUpwardTrend;
-    private double localStartPrice, globalStartPrice;
-    private int globalNumTx;
-    private boolean wellEstablishedTrend;
-
-
-    public Rectangle(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startingDay) {
-        // Year 2014, month 1 (Feb), day 21
-        // numofDays = 18
-        this.numOfDays = numOfDays;
-        this.numOfDaysInGeneration = numOfDaysInGeneration;
-        this.startingAmountOfMoney = startingAmountOfMoney;
-        this.startForData = startingDay;
-        for (int i = 0; i < numOfDays; i++) {
-            try {
-                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[startForData + i]);
-                data.put(startForData + i, ticks);
-
-            } catch (FileNotFoundException e) {
-                System.out.println("File not found, stacktrace: ");
-                e.printStackTrace();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public Rectangle(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
+        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
     }
 
-    public void calcFitness(Chromosome chr, boolean logForViz) {
-        init();
-        int numberOfTransactions = 0;
-
-        for (int i = 0; i < numOfDaysInGeneration; i++) {
-            //System.out.println(i);
-
-            List<Tick> ticks1 = data.get(startForData + i);
-//            if (ticks1 == null) {
-//                continue;
-//            }
-//            System.out.println("Day "+Utils.SDF.format(calendar.getTime())+", amount "+amount);
-
-            for (Tick tick : ticks1) {
-                numberOfTransactions += trade(tick, chr);
-            }
-
-            //sell everything
-            //sell();
-            //bottom1 = -1;
-            i++;
-
-        }
-//        numberOfTransactions++;
-        sell();
-
-        chr.setFitness(amount);
-        chr.setNumberOfTransactions(numberOfTransactions);
-    }
-
-    public void increaseDay() {
-        startForData++;
-    }
-
-    @Override
     public String getName() {
         return "Rectangle";
     }
 
-    @Override
     public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
         return new Rectangle(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
     }
 
-    private int trade(Tick transaction, Chromosome chr) {
+    protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {
         lastPrice = transaction.getPrice();
 
-        updateTrend();
+        sp.calculate(transaction.getTimestamp(), lastPrice);
+        boolean wellEstablishedTrend = sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue();
+
         if (openPosition) {
             if (lastPrice <= sellLoss) {
                 sell();
@@ -159,9 +85,9 @@ public class Rectangle extends FitnessFunction {
                         bottom2 = lastPrice;
                     } else {
                         initPattern();
-                        //                    if(wellEstablishedTrend) { //TODO: check if needed
-                        //                        top1 = lastPrice;
-                        //                    }
+                        /*if(wellEstablishedTrend) { //TODO: check if needed
+                            top1 = lastPrice;
+                        }*/
                     }
                 } else if (lastPrice >= top1 || lastPrice >= top2) {
                     //buy
@@ -184,29 +110,32 @@ public class Rectangle extends FitnessFunction {
         top1 = top2 = -1;
     }
 
-    private void init() {
+    protected void init() {
         initPattern();
 
         openPosition = false;
         lastPrice = 0;
         amount = startingAmountOfMoney;
         numOfShares = 0;
-
-        globalNumTx = 0;
-        localUpwardTrend = globalUpwardTrend = false;
-        localStartPrice = globalStartPrice = 0;
-
-        wellEstablishedTrend = false;
     }
 
-    private void updateTrend() {
-        wellEstablishedTrend = true;
-    }
 
     private void sell() {
         openPosition = false;
         amount += numOfShares * lastPrice;
         numOfShares = 0;
         initPattern();
+    }
+
+    public static List<Range> getGeneRanges() {
+        List<Range> ranges = new LinkedList<Range>();
+
+        ranges.add(new Range(0.25, 0.4));
+        ranges.add(new Range(0.3, 0.6));
+        ranges.add(new Range(0.5, 1));
+        ranges.add(new Range(0.1, 0.4));
+        ranges.add(new Range(0, 50));
+
+        return ranges;
     }
 }

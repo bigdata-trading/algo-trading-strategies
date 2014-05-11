@@ -1,12 +1,11 @@
 package ch.epfl.bigdata.ts.pattern.fitness;
 
 import ch.epfl.bigdata.ts.dataparser.Tick;
-import ch.epfl.bigdata.ts.dataparser.Utils;
 import ch.epfl.bigdata.ts.ga.Chromosome;
+import ch.epfl.bigdata.ts.ga.util.Range;
 
-import java.io.FileNotFoundException;
-import java.util.*;
-
+import java.util.LinkedList;
+import java.util.List;
 
 public class DoubleTop extends FitnessFunction {
 
@@ -16,106 +15,53 @@ public class DoubleTop extends FitnessFunction {
     public static final int GENE_PROTECT_BUY_LOSS = 3;
     public static final int GENE_TREND_STRENGTH = 4;
 
-
     private double top1;
     private double top2;
     private double bottom;
 
-    private boolean openPosition = false;
-
-    private double lastPrice;
-
     private double buyLoss;
     private double buyGain;
 
-    private double startingAmountOfMoney;
-    private int startingAmountOfShares;
-    private double amount;
-    private int numOfShares;
+    private boolean first = true;
 
-    private int numOfDays;
-    private int numOfDaysInGeneration;
-    private int startForData;
-    private boolean first = false;
-
-    private Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
-
-    public DoubleTop(int numOfDays, int startingAmountOfShares, int numOfDaysInGeneration, int startForData) {
-        // Year 2014, month 1 (Feb), day 21
-        // numofDays = 18
-        this.numOfDays = numOfDays;
-        this.numOfDaysInGeneration = numOfDaysInGeneration;
-        this.startingAmountOfShares = startingAmountOfShares;
-        this.startForData = startForData;
-        for (int i = 0; i < numOfDays; i++) {
-            try {
-                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[this.startForData + i]);
-                data.put(this.startForData + i, ticks);
-
-            } catch (FileNotFoundException e) {
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public DoubleTop(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
+        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
     }
 
-    public void calcFitness(Chromosome chr, boolean logForViz) {
-
-        init();
-
-        int numberOfTransactions = 0;
-
-        for (int i = 0; i < numOfDaysInGeneration; i++) {
-
-            List<Tick> ticks1 = data.get(startForData + i);
-
-            for (Tick tick : ticks1) {
-                numberOfTransactions += trade(tick, chr);
-            }
-        }
-//        numberOfTransactions++;
-        //buy{}
-        double profit = startingAmountOfMoney - amount + numOfShares * lastPrice;
-
-        chr.setFitness(profit);
-        chr.setNumberOfTransactions(numberOfTransactions);
-    }
-
-    @Override
-    public void increaseDay() {
-        startForData++;
-    }
-
-    @Override
     public String getName() {
         return "DoubleTop";
     }
 
-    @Override
     public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
         return new DoubleTop(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
     }
 
-    private int trade(Tick transaction, Chromosome chr) {
+    protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {
         lastPrice = transaction.getPrice();
-        if (!first) {
-            startingAmountOfMoney = numOfShares * lastPrice;
+        sp.calculate(transaction.getTimestamp(), lastPrice);
+
+        if (first) {
+            numOfShares = (int) Math.floor(startingAmountOfMoney / lastPrice);
+            amount -= numOfShares * lastPrice;
+            first = false;
         }
 
         if (openPosition) {
-            if (lastPrice <= buyLoss) {
+            if (lastPrice >= buyLoss) {
                 top1 = lastPrice;
                 buy();
                 return 1;
-            } else if (lastPrice >= buyGain) {
+            } else if (lastPrice <= buyGain) {
                 top1 = top2;
                 buy();
+                bottom = lastPrice;
                 return 1;
             }
         } else {
             if (top1 == -1) {
-                top1 = lastPrice;
+                if(sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue()) {
+                    top1 = lastPrice;
+                }
             } else if (bottom == -1) {
                 if (lastPrice > top1) {
                     top1 = lastPrice;
@@ -134,8 +80,8 @@ public class DoubleTop extends FitnessFunction {
                     numOfShares = 0;
                     double avg = top1 - bottom + top2 - bottom;
                     avg /= 2;
-                    buyLoss = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
-                    buyGain = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
+                    buyLoss = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
+                    buyGain = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
                     return 1;
                 }
             }
@@ -143,7 +89,7 @@ public class DoubleTop extends FitnessFunction {
         return 0;
     }
 
-    private void init() {
+    protected void init() {
         top1 = -1;
         top2 = -1;
         bottom = -1;
@@ -152,9 +98,8 @@ public class DoubleTop extends FitnessFunction {
 
         lastPrice = 0;
 
-        numOfShares = startingAmountOfShares;
-        amount = 0;
-        first = false;
+        amount = startingAmountOfMoney;
+        first = true;
     }
 
     private void buy() {
@@ -162,5 +107,23 @@ public class DoubleTop extends FitnessFunction {
         numOfShares = (int) Math.floor(amount / lastPrice);
         amount -= numOfShares * lastPrice;
         top2 = bottom = -1;
+    }
+
+    public static List<Range> getGeneRanges(){
+        List<Range> ranges = new LinkedList<Range>();
+
+        ranges.add(new Range(0, 0.1));
+        ranges.add(new Range(0, 0.1));
+        ranges.add(new Range(0.1, 0.4));
+        ranges.add(new Range(0.1, 0.4));
+        ranges.add(new Range(0, 40));
+
+        /*ranges.add(new Range(0, 0.3));
+        ranges.add(new Range(0, 0.3));
+        ranges.add(new Range(0.3, 0.7));
+        ranges.add(new Range(0.1, 0.3));
+        ranges.add(new Range(20, 50));*/
+
+        return ranges;
     }
 }

@@ -1,50 +1,19 @@
 package ch.epfl.bigdata.ts.pattern.fitness;
 
 import ch.epfl.bigdata.ts.dataparser.Tick;
-import ch.epfl.bigdata.ts.dataparser.Utils;
 import ch.epfl.bigdata.ts.ga.Chromosome;
 
-import java.io.FileNotFoundException;
 import java.util.*;
 
 
 public class RandomFirtness extends FitnessFunction {
 
-
-    private int startForData;
-    private boolean openPosition = false;
-
-    private double lastPrice;
-
-    private int startingAmountOfMoney;
-    private int amount;
-    private int numOfShares;
-
-    private int numOfDays;
-
     private Random rand = new Random();
 
-    private Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
-
-
     public RandomFirtness(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        this.numOfDays = numOfDays;
-        this.startingAmountOfMoney = startingAmountOfMoney;
-        this.startForData = startForData;
-        for (int i = 0; i < numOfDays; i++) {
-            try {
-                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[startForData + i]);
-                data.put(startForData + i, ticks);
-
-            } catch (FileNotFoundException e) {
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
     }
 
-    @Override
     public void calcFitness(Chromosome chr, boolean logForViz) {
 
         init();
@@ -62,7 +31,6 @@ public class RandomFirtness extends FitnessFunction {
         }
         sell();
     }
-
 
     private void trade(Tick transaction, Chromosome chr, int tickssize) {
         lastPrice = transaction.getPrice();
@@ -82,12 +50,16 @@ public class RandomFirtness extends FitnessFunction {
         }
     }
 
-    private void init() {
+    protected void init() {
         openPosition = false;
 
         lastPrice = 0;
 
         amount = startingAmountOfMoney;
+    }
+
+    protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {
+        return 0;
     }
 
     private void sell() {
@@ -96,18 +68,10 @@ public class RandomFirtness extends FitnessFunction {
         numOfShares = 0;
     }
 
-    @Override
-    public void increaseDay() {
-
-        startForData++;
-    }
-
-    @Override
     public String getName() {
         return "Random";
     }
 
-    @Override
     public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
         return new RandomFirtness(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
     }

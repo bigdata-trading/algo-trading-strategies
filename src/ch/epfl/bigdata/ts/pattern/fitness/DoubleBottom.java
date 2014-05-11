@@ -1,12 +1,9 @@
 package ch.epfl.bigdata.ts.pattern.fitness;
 
 import ch.epfl.bigdata.ts.dataparser.Tick;
-import ch.epfl.bigdata.ts.dataparser.Utils;
 import ch.epfl.bigdata.ts.ga.Chromosome;
 import ch.epfl.bigdata.ts.ga.util.Range;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.*;
 
 
@@ -18,92 +15,18 @@ public class DoubleBottom extends FitnessFunction {
     public static final int GENE_PROTECT_SELL_LOSS = 3;
     public static final int GENE_TREND_STRENGTH = 4;
 
-
     private double bottom1;
     private double bottom2;
     private double top;
 
-    private boolean openPosition = false;
-
-    private double lastPrice;
-
     private double sellLoss;
     private double sellGain;
 
-    private double startingAmountOfMoney;
-    private double amount;
-    private int numOfShares;
-
-    private int numOfDays;
-    private int numOfDaysInGeneration;
-
-    private int startForData;
-
-    private Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
-
-
     public DoubleBottom(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        // Year 2014, month 1 (Feb), day 21
-        // numofDays = 18
-        this.numOfDays = numOfDays;
-        this.numOfDaysInGeneration = numOfDaysInGeneration;
-        this.startingAmountOfMoney = startingAmountOfMoney;
-        this.startForData = startForData;
-        for (int i = 0; i < numOfDays; i++) {
-            try {
-                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[this.startForData + i]);
-                data.put(this.startForData + i, ticks);
-
-            } catch (FileNotFoundException e) {
-                System.out.println("File not found stacktrace: ");
-                e.printStackTrace();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
     }
 
-    public void calcFitness(Chromosome chr, boolean logForViz) {
-
-        init();
-        int numberOfTransactions = 0;
-        StringBuilder vizLog = new StringBuilder("");
-
-        for (int i = 0; i < numOfDaysInGeneration; i++) {
-
-            List<Tick> ticks1 = data.get(startForData + i);
-
-            for (Tick tick : ticks1) {
-                numberOfTransactions += trade(tick, chr, logForViz, vizLog, i);
-            }
-        }
-
-        sell();
-
-        chr.setFitness(amount);
-        chr.setNumberOfTransactions(numberOfTransactions);
-
-        PrintWriter pw = null;
-        try {
-            pw = new PrintWriter("db-eval-log-viz.csv");
-            pw.write(vizLog.toString());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            if (pw != null) pw.close();
-        }
-
-
-    }
-
-    @Override
-    public void increaseDay() {
-        startForData++;
-    }
-
-
-    private int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {
+    protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {
 
         int toRet = 0;
 
@@ -113,6 +36,8 @@ public class DoubleBottom extends FitnessFunction {
         }
 
         lastPrice = transaction.getPrice();
+        sp.calculate(transaction.getTimestamp(), lastPrice);
+
         int sold = 0;
         int bought = 0;
         long b1ts = -1;
@@ -134,11 +59,14 @@ public class DoubleBottom extends FitnessFunction {
                 toRet = 1;
                 b2ts = tts = -1;
                 b1ts = transaction.getTimestamp();
+                top = lastPrice;
             }
         } else {
             if (bottom1 == -1) {
-                bottom1 = lastPrice;
-                b1ts = transaction.getTimestamp();
+                if(- sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue()) {
+                    bottom1 = lastPrice;
+                    b1ts = transaction.getTimestamp();
+                }
             } else if (top == -1) {
                 if (lastPrice < bottom1) {
                     bottom1 = lastPrice;
@@ -188,7 +116,7 @@ public class DoubleBottom extends FitnessFunction {
         return  toRet;
     }
 
-    private void init() {
+    protected void init() {
         bottom1 = -1;
         bottom2 = -1;
         top = -1;
@@ -214,18 +142,17 @@ public class DoubleBottom extends FitnessFunction {
         sellGain = -1;
     }
 
-
     public static List<Range> getGeneRanges(){
         List<Range> ranges = new LinkedList<Range>();
 
-        ranges.add(new Range(0, 1));
-        ranges.add(new Range(0, 1));
-        ranges.add(new Range(0.1, 0.5));
+        ranges.add(new Range(0, 0.3));
+        ranges.add(new Range(0, 0.3));
+        ranges.add(new Range(0.3, 0.7));
         ranges.add(new Range(0.1, 0.3));
+        ranges.add(new Range(20, 50));
 
         return ranges;
     }
-
 
     public String getName(){
         return "DoubleBottom";

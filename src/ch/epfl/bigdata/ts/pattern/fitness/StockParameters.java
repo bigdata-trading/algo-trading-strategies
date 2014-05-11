@@ -20,14 +20,11 @@ public class StockParameters {
     public static final int ADX_CALCULATION = 3;
 
 
-    private int day;
-
                 /****************/
                 /* constructors */
                 /***************/
 
-    public StockParameters(Boolean start, int day){
-        this.day = day;
+    public StockParameters(Boolean start){
         if (start){
             resetStockParameters();
         }
@@ -58,7 +55,9 @@ public class StockParameters {
     double price;
 
     /* getters */
-    public double getADX(){
+    public double getTrendStrength(){
+        if (mDM > 0)
+            return -ADX;
         return ADX;
     }
 
@@ -238,7 +237,7 @@ public class StockParameters {
     }
 
     public static void test() throws FileNotFoundException{
-        StockParameters sp = new StockParameters(true,1);
+        StockParameters sp = new StockParameters(true);
         File file = new File(pathToTest + "stat.csv");
         Scanner scanner = new Scanner(file);
 
@@ -280,7 +279,7 @@ public class StockParameters {
        */
 
             try {
-                StockParameters sp = new StockParameters(true,1);
+                StockParameters sp = new StockParameters(true);
                 List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[1]);
 
                 for (Tick tick : ticks) {

@@ -22,7 +22,6 @@ public class Chromosome {
 	}
 
 	public double getFitness() {
-        if (numberOfTransactions==0) return 2000*(new Random(System.currentTimeMillis()).nextDouble());
 		return fitness;
 	}
 

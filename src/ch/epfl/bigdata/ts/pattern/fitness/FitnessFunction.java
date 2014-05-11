@@ -1,12 +1,55 @@
 package ch.epfl.bigdata.ts.pattern.fitness;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import ch.epfl.bigdata.ts.dataparser.Tick;
+import ch.epfl.bigdata.ts.dataparser.Utils;
 import ch.epfl.bigdata.ts.ga.Chromosome;
 import ch.epfl.bigdata.ts.ga.Population;
-import ch.epfl.bigdata.ts.ga.util.Range;
 
 public abstract class FitnessFunction {
+
+    protected boolean openPosition = false;
+
+    protected double lastPrice;
+
+    protected double startingAmountOfMoney;
+    protected double amount;
+    protected int numOfShares;
+
+    protected int numOfDays;
+    protected int numOfDaysInGeneration;
+    protected int startForData;
+
+    protected StockParameters sp = new StockParameters(true);
+
+    protected Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
+
+    public FitnessFunction(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
+        // Year 2014, month 1 (Feb), day 21
+        // numofDays = 18
+        this.numOfDays = numOfDays;
+        this.numOfDaysInGeneration = numOfDaysInGeneration;
+        this.startingAmountOfMoney = startingAmountOfMoney;
+        this.startForData = startForData;
+        for (int i = 0; i < numOfDays; i++) {
+            try {
+                List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[this.startForData + i]);
+                data.put(this.startForData + i, ticks);
+
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found stacktrace: ");
+                e.printStackTrace();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 	public void evaluate(Population population) {
 		List<Chromosome> chrs = population.getChromosomes();
@@ -16,9 +59,50 @@ public abstract class FitnessFunction {
            // System.out.println("Finished evaluating chr " + i);
 		}
 	}
-	public abstract void calcFitness(Chromosome chr, boolean logForViz);
 
-    public abstract void increaseDay();
+    public void calcFitness(Chromosome chr, boolean logForViz) {
+
+        init();
+        int numberOfTransactions = 0;
+        StringBuilder vizLog = new StringBuilder("");
+
+        for (int i = 0; i < numOfDaysInGeneration; i++) {
+
+            List<Tick> ticks1 = data.get(startForData + i);
+
+            for (Tick tick : ticks1) {
+                numberOfTransactions += trade(tick, chr, logForViz, vizLog, i);
+            }
+        }
+
+        if(numberOfTransactions == 0) {
+            chr.setFitness(0.000001);
+        } else {
+            chr.setFitness(amount + numOfShares * lastPrice);
+        }
+        chr.setNumberOfTransactions(numberOfTransactions);
+
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter("db-eval-log-viz.csv");
+            pw.write(vizLog.toString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (pw != null) pw.close();
+        }
+    }
+
+    public void setStartForData(int startForData) {
+        this.startForData = startForData;
+    }
+
+    public void increaseDay() {
+        startForData++;
+    }
+
+    protected abstract void init();
+    protected abstract int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order);
 
     public abstract String getName();
 

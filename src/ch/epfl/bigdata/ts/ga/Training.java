@@ -16,7 +16,7 @@ import java.util.*;
 public class Training extends Thread {
 
     private static int NUM_OF_CHROMOSOMES = 20;
-    public static int NUM_OF_ITERATIONS = 1;
+    public static int NUM_OF_ITERATIONS = 5;
 
     private List<Range> range = null;
     private List<Chromosome> bestChromosomes = new LinkedList<Chromosome>();
@@ -27,10 +27,12 @@ public class Training extends Thread {
     private MutationMethod mutatMethod = new UniformMutation();
 
     private FitnessFunction fitnessFunction = null;
+    private int startForData;
 
-    public Training(List<Range> range, FitnessFunction fitnessFunction) {
+    public Training(List<Range> range, FitnessFunction fitnessFunction, int startForData) {
         this.range = range;
         this.fitnessFunction = fitnessFunction;
+        this.startForData = startForData;
     }
 
     public void run() {
@@ -74,6 +76,8 @@ public class Training extends Thread {
                 for (int k=0; k<range.size(); k++) {
                     geneRange.put(Integer.toString(k), range.get(k));
                 }
+
+                fitnessFunction.setStartForData(startForData);
 
                 //out.println("Number of days for training: " + numOfDays + ", starting amount of money: " + startMoney + ", window for training: " + generationWindow + ", startData for trading: " + startData);
                 Chromosome bestChromosome = GeneticAlgorithm.run(chromosomes, geneRange, fitnessFunction, selMethod, crossMethod, mutatMethod);
