@@ -45,7 +45,7 @@ public class RandomFirtness extends FitnessFunction {
     }
 
     @Override
-    public void calcFitness(Chromosome chr) {
+    public void calcFitness(Chromosome chr, boolean logForViz) {
 
         init();
 
@@ -100,6 +100,11 @@ public class RandomFirtness extends FitnessFunction {
     public void increaseDay() {
 
         startForData++;
+    }
+
+    @Override
+    public String getName() {
+        return "Random";
     }
 
     @Override

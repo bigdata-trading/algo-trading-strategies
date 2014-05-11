@@ -10,18 +10,14 @@ import ch.epfl.bigdata.ts.ga.util.Range;
 import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
 import ch.epfl.bigdata.ts.pattern.fitness.Rectangle;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
 
 public class Training extends Thread {
 
-    private static int NUM_OF_CHROMOSOMES = 200;
-    public static int NUM_OF_ITERATIONS = 10;
+    private static int NUM_OF_CHROMOSOMES = 20;
+    public static int NUM_OF_ITERATIONS = 1;
 
-
-    private String strategyName;
     private List<Range> range = null;
     private List<Chromosome> bestChromosomes = new LinkedList<Chromosome>();
 
@@ -32,67 +28,76 @@ public class Training extends Thread {
 
     private FitnessFunction fitnessFunction = null;
 
-    public Training(String strategyName, List<Range> range, FitnessFunction fitnessFunction) {
-        this.strategyName = strategyName;
+    public Training(List<Range> range, FitnessFunction fitnessFunction) {
         this.range = range;
         this.fitnessFunction = fitnessFunction;
     }
 
     public void run() {
-        PrintStream out = null;
+        FileWriter out = null;
 
         try {
-            out = new PrintStream(new FileOutputStream(strategyName + "_training_" + (new Date()).getTime()) + ".txt");
-        } catch (FileNotFoundException e) {
+            String fn = getStrategy().getName() + "_training_" + (new Date()).getTime() + ".txt";
+            try {
+                out = new FileWriter(fn, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            out.append("NUM_OF_CHROMOSOMES = " + NUM_OF_CHROMOSOMES + "\n");
+
+            List<Chromosome> chromosomes = new ArrayList<Chromosome>();
+
+            for (int j = 0; j < NUM_OF_ITERATIONS; j++) {
+
+                out.append("ITERATION #" + j + "\n");
+                long startTime = System.currentTimeMillis();
+
+                Random random = new Random();
+                chromosomes.clear();
+
+                for (int i = 0; i < NUM_OF_CHROMOSOMES; i++) {
+
+                    List<Gene> genes = new LinkedList<Gene>();
+                    for (int k=0; k<range.size(); k++) {
+                        double lower = range.get(k).getLower();
+                        double upper = range.get(k).getUpper();
+                        double val = lower + (upper - lower) * random.nextDouble();
+                        Gene gene = new Gene(Integer.toString(k), val);
+                        genes.add(gene);
+                    }
+                    Chromosome chr = new Chromosome(genes);
+                    chromosomes.add(chr);
+                }
+
+                HashMap<String, Range> geneRange = new HashMap<String, Range>();
+                for (int k=0; k<range.size(); k++) {
+                    geneRange.put(Integer.toString(k), range.get(k));
+                }
+
+                //out.println("Number of days for training: " + numOfDays + ", starting amount of money: " + startMoney + ", window for training: " + generationWindow + ", startData for trading: " + startData);
+                Chromosome bestChromosome = GeneticAlgorithm.run(chromosomes, geneRange, fitnessFunction, selMethod, crossMethod, mutatMethod);
+                bestChromosomes.add(bestChromosome);
+
+                long endTime = System.currentTimeMillis();
+                long duration = endTime - startTime;
+                out.append(bestChromosome + "\n");
+                out.append("Fitness: " + bestChromosome.getFitness() + "\n");
+                out.append("Number of transactions: " + bestChromosome.getNumberOfTransactions() + "\n");
+                out.append("This took " + duration + " milliseconds" + "\n");
+            }
+
+
+        } catch (Exception e) {
             e.printStackTrace();
             return;
-        }
-
-        out.println("NUM_OF_CHROMOSOMES = " + NUM_OF_CHROMOSOMES);
-
-
-        List<Chromosome> chromosomes = new ArrayList<Chromosome>();
-
-        for (int j = 0; j < NUM_OF_ITERATIONS; j++) {
-
-            out.println("ITERATION #" + j);
-            long startTime = System.currentTimeMillis();
-
-            Random random = new Random();
-            chromosomes.clear();
-
-            for (int i = 0; i < NUM_OF_CHROMOSOMES; i++) {
-
-                List<Gene> genes = new LinkedList<Gene>();
-                for (int k=0; k<range.size(); k++) {
-                    double lower = range.get(k).getLower();
-                    double upper = range.get(k).getUpper();
-                    double val = lower + (upper - lower) * random.nextDouble();
-                    Gene gene = new Gene(Integer.toString(k), val);
-                    genes.add(gene);
-                }
-                Chromosome chr = new Chromosome(genes);
-                chromosomes.add(chr);
+        } finally {
+            if (out != null) try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            HashMap<String, Range> geneRange = new HashMap<String, Range>();
-            for (int k=0; k<range.size(); k++) {
-                geneRange.put(Integer.toString(k), range.get(k));
-            }
-
-            //out.println("Number of days for training: " + numOfDays + ", starting amount of money: " + startMoney + ", window for training: " + generationWindow + ", startData for trading: " + startData);
-            Chromosome bestChromosome = GeneticAlgorithm.run(chromosomes, geneRange, fitnessFunction, selMethod, crossMethod, mutatMethod);
-            bestChromosomes.add(bestChromosome);
-
-            long endTime = System.currentTimeMillis();
-            long duration = endTime - startTime;
-            out.println(bestChromosome);
-            out.println("Fitness: " + bestChromosome.getFitness());
-            out.println("Number of transactions: " + bestChromosome.getNumberOfTransactions());
-            out.println("This took " + duration + " milliseconds");
         }
-
-        if (out != null) out.close();
     }
 
     public void setSelectionMethod(SelectionMethod m) {
@@ -107,7 +112,7 @@ public class Training extends Thread {
         mutatMethod = m;
     }
 
-    public List<Chromosome> getBestChromosome() {
+    public List<Chromosome> getBestChromosomes() {
         return bestChromosomes;
     }
 

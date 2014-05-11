@@ -12,13 +12,15 @@ public abstract class FitnessFunction {
 		List<Chromosome> chrs = population.getChromosomes();
 		for(int i = 0; i < chrs.size(); i++) {
            // System.out.println("Started evaluating chr " + i);
-			calcFitness(chrs.get(i));
+			calcFitness(chrs.get(i), false);
            // System.out.println("Finished evaluating chr " + i);
 		}
 	}
-	public abstract void calcFitness(Chromosome chr);
+	public abstract void calcFitness(Chromosome chr, boolean logForViz);
 
     public abstract void increaseDay();
+
+    public abstract String getName();
 
     public abstract FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData);
 }
