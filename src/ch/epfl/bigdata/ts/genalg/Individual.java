@@ -1,18 +1,18 @@
 package ch.epfl.bigdata.ts.genalg;
 
+import ch.epfl.bigdata.ts.ga.util.Range;
+import java.util.LinkedList;
+import java.util.List;
+
 import java.util.Random;
 
 public class Individual{
-
-    private static int NUM_OF_CHROMOSOMES = 200;
-    public static int NUM_OF_ITERATIONS = 10;
-
 
     public static final int GENE_BOTTOM_1 = 0;
     public static final int GENE_BOTTOM_2 = 1;
     public static final int GENE_PROTECT_SELL_GAIN = 2;
     public static final int GENE_PROTECT_SELL_LOSS = 3;
-    public static final int GENE_TREND_STRENGTH = 4;
+    public static final int GENE_NUMBER_OF_TICKS = 4;
 
     private double[] genes = new double[Constants.NUMBER_OF_GENES];
 
@@ -32,6 +32,7 @@ public class Individual{
 
     private double amount;
     private int numOfShares;
+    private int count = 0;
 
 
 
@@ -44,21 +45,22 @@ public class Individual{
          }
     }
 
-    public void generate_gene(int index){
-        switch (index) {
-            case 0: genes[0] = Constants.BOT1_MIN + (Constants.BOT1_MAX-Constants.BOT1_MIN)*r.nextDouble();
-                break;
-            case 1: genes[1] = Constants.TOP_MIN + (Constants.TOP_MAX-Constants.TOP_MIN)*r.nextDouble();
-                break;
-            case 2: genes[2] = Constants.GAIN_PERCENTAGE_MIN + (Constants.GAIN_PERCENTAGE_MAX-Constants.GAIN_PERCENTAGE_MIN)*r.nextDouble();
-                break;
-            case 3: genes[3] = Constants.LOSS_PERCENTAGE_MIN + (Constants.LOSS_PERCENTAGE_MAX-Constants.LOSS_PERCENTAGE_MIN)*r.nextDouble();
-                break;
+    public double transform_gene(int index){
+        double v = 0;
+        for (int i= index*Constants.GENE_LENGTH; i< (index+1)*Constants.GENE_LENGTH; i++){
+            v=v*2+genes[i];
         }
+        List<Range> r = Constants.getGeneRanges();
+        return r.get(index).getLower() + (r.get(index).getUpper()-r.get(index).getLower())*(v/Math.pow(2,Constants.GENE_LENGTH));
+    }
+
+    public void generate_gene(int index){
+        genes[index] = r.nextInt(2);
     }
 
     public void reset(){
         bottom1 = -1;
+        count = 0;
         bottom2 = -1;
         top = -1;
 
@@ -106,6 +108,7 @@ public class Individual{
 
      public void trade(long time,double price){
         lastPrice = price;
+        count ++;
 
         if (openPosition) {
             if (lastPrice <= sellLoss) {
@@ -118,18 +121,20 @@ public class Individual{
                 //return 1;
             }
         } else {
-            if (bottom1 == -1) {
+            if ((bottom1 == -1) ){
                 bottom1 = lastPrice;
+                count = 0;
             } else if (top == -1) {
                 if (lastPrice < bottom1) {
                     bottom1 = lastPrice;
-                } else if ((lastPrice - bottom1) >= genes[GENE_BOTTOM_1]) {
+                    count = 0;
+                } else if ((lastPrice - bottom1) >= transform_gene(GENE_BOTTOM_1)) {
                     top = lastPrice;
                 }
             } else if (bottom2 == -1) {
                 if (lastPrice > top) {
                     top = lastPrice;
-                } else if ((top - lastPrice) >= genes[GENE_BOTTOM_2]) {
+                } else if ((top - lastPrice) >= transform_gene(GENE_BOTTOM_2)) {
                     bottom2 = lastPrice;
                 }
             } else {
@@ -142,8 +147,8 @@ public class Individual{
                     amount -= numOfShares * lastPrice;
                     double avg = top - bottom1 + top - bottom2;
                     avg /= 2;
-                    sellLoss = lastPrice - genes[GENE_PROTECT_SELL_LOSS] * avg;
-                    sellGain = lastPrice + genes[GENE_PROTECT_SELL_GAIN] * avg;
+                    sellLoss = lastPrice - transform_gene(GENE_PROTECT_SELL_LOSS) * avg;
+                    sellGain = lastPrice + transform_gene(GENE_PROTECT_SELL_GAIN) * avg;
                     //return 1;
                 }
             }
