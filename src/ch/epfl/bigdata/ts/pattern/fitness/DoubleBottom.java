@@ -44,26 +44,51 @@ public class DoubleBottom extends FitnessFunction {
         long b2ts = -1;
         long tts = -1;
 
+        if (sell == SELL_WITH_LOSS){
+            sell();
+            sold = 1;
+            toRet = 1;
+            b2ts = tts = -1;
+            b1ts = transaction.getTimestamp();
+        } else if (sell == SELL_WITH_GAIN){
+            double tmp = top;
+            sell();
+            sold = 1;
+            toRet = 1;
+            b2ts = tts = -1;
+            b1ts = transaction.getTimestamp();
+            top = tmp;
+        }
+
         if (openPosition) {
-            if (lastPrice <= sellLoss) {
-                bottom1 = lastPrice;
-                sell();
-                sold = 1;
+            if (buy) {
+                buy = false;
+                numOfShares = (int) Math.floor(amount / lastPrice);
+                amount -= numOfShares * lastPrice;
+                double avg = top - bottom1 + top - bottom2;
+                avg /= 2;
+                sellLoss = lastPrice - chr.getGenes().get(GENE_PROTECT_SELL_LOSS).getValue() * avg;
+                sellGain = lastPrice + chr.getGenes().get(GENE_PROTECT_SELL_GAIN).getValue() * avg;
                 toRet = 1;
-                b2ts = tts = -1;
-                b1ts = transaction.getTimestamp();
-            } else if (lastPrice >= sellGain) {
-                bottom1 = bottom2;
-                sell();
-                sold = 1;
-                toRet = 1;
-                b2ts = tts = -1;
-                b1ts = transaction.getTimestamp();
-                top = lastPrice;
+                bought = 1;
+
+            } else {
+                if (lastPrice <= sellLoss) {
+                    bottom1 = lastPrice;
+                    sell = SELL_WITH_LOSS;
+
+                } else if (lastPrice >= sellGain) {
+                    sell = SELL_WITH_GAIN;
+                    bottom1 = bottom2;
+                    if ((lastPrice - bottom1) >= chr.getGenes().get(GENE_BOTTOM_1).getValue()) {
+                        top = lastPrice;
+                        tts = transaction.getTimestamp();
+                    }
+                }
             }
         } else {
             if (bottom1 == -1) {
-                if(- sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue()) {
+                if (-sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue()) {
                     bottom1 = lastPrice;
                     b1ts = transaction.getTimestamp();
                 }
@@ -90,33 +115,29 @@ public class DoubleBottom extends FitnessFunction {
                 } else {
                     //buy
                     openPosition = true;
-                    numOfShares = (int) Math.floor(amount / lastPrice);
-                    amount -= numOfShares * lastPrice;
-                    double avg = top - bottom1 + top - bottom2;
-                    avg /= 2;
-                    sellLoss = lastPrice - chr.getGenes().get(GENE_PROTECT_SELL_LOSS).getValue() * avg;
-                    sellGain = lastPrice + chr.getGenes().get(GENE_PROTECT_SELL_GAIN).getValue() * avg;
-                    toRet = 1;
-                    bought = 1;
+                    buy = true;
                 }
             }
         }
 
         if (logForViz) {
-            if (b1ts>0) vizLog.append("," + order + "" + b1ts); else vizLog.append(","  + b1ts);
-            if (b2ts>0) vizLog.append("," + order + "" + b2ts); else vizLog.append(","  + b2ts);
-            if (tts>0) vizLog.append("," + order + "" + tts); else vizLog.append(","  + tts);
+            if (b1ts > 0) vizLog.append("," + order + "" + b1ts);
+            else vizLog.append("," + b1ts);
+            if (b2ts > 0) vizLog.append("," + order + "" + b2ts);
+            else vizLog.append("," + b2ts);
+            if (tts > 0) vizLog.append("," + order + "" + tts);
+            else vizLog.append("," + tts);
             vizLog.append("," + bought);
             vizLog.append("," + sold);
             vizLog.append("," + sellGain);
             vizLog.append("," + sellLoss);
-            if (sold == 1 || bought == 1 || order == 0){
+            if (sold == 1 || bought == 1 || order == 0) {
                 vizLog.append("," + amount + "," + numOfShares);
             }
             vizLog.append("\n");
         }
 
-        return  toRet;
+        return toRet;
     }
 
     protected void init() {
@@ -137,6 +158,7 @@ public class DoubleBottom extends FitnessFunction {
 
     private void sell() {
         openPosition = false;
+        sell = DO_NOT_SELL;
         amount += numOfShares * lastPrice;
         numOfShares = 0;
         bottom2 = top = -1;
@@ -145,7 +167,7 @@ public class DoubleBottom extends FitnessFunction {
         sellGain = -1;
     }
 
-    public static List<Range> getGeneRanges(){
+    public static List<Range> getGeneRanges() {
         List<Range> ranges = new LinkedList<Range>();
 
         ranges.add(new Range(0, 0.3));
@@ -157,11 +179,11 @@ public class DoubleBottom extends FitnessFunction {
         return ranges;
     }
 
-    public String getName(){
+    public String getName() {
         return "DoubleBottom";
     }
 
-    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData){
+    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
         return new DoubleBottom(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
     }
 }

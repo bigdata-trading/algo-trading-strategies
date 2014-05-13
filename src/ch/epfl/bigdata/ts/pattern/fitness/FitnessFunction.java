@@ -14,6 +14,12 @@ import ch.epfl.bigdata.ts.ga.Population;
 public abstract class FitnessFunction {
 
     protected boolean openPosition = false;
+    protected boolean buy = false;
+    protected int sell = DO_NOT_SELL;
+
+    public static int DO_NOT_SELL = 11;
+    public static int SELL_WITH_LOSS = 22;
+    public static int SELL_WITH_GAIN = 33;
 
     protected double lastPrice;
 
@@ -51,14 +57,14 @@ public abstract class FitnessFunction {
         }
     }
 
-	public void evaluate(Population population) {
-		List<Chromosome> chrs = population.getChromosomes();
-		for(int i = 0; i < chrs.size(); i++) {
-           // System.out.println("Started evaluating chr " + i);
-			calcFitness(chrs.get(i), false);
-           // System.out.println("Finished evaluating chr " + i);
-		}
-	}
+    public void evaluate(Population population) {
+        List<Chromosome> chrs = population.getChromosomes();
+        for (int i = 0; i < chrs.size(); i++) {
+            // System.out.println("Started evaluating chr " + i);
+            calcFitness(chrs.get(i), false);
+            // System.out.println("Finished evaluating chr " + i);
+        }
+    }
 
     public void calcFitness(Chromosome chr, boolean logForViz) {
 
@@ -75,7 +81,7 @@ public abstract class FitnessFunction {
             }
         }
 
-        if(numberOfTransactions == 0) {
+        if (numberOfTransactions == 0) {
             chr.setFitness(0.000001);
         } else {
             chr.setFitness(amount + numOfShares * lastPrice);
@@ -102,6 +108,7 @@ public abstract class FitnessFunction {
     }
 
     protected abstract void init();
+
     protected abstract int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order);
 
     public abstract String getName();
