@@ -38,8 +38,11 @@
 							// set up the updating of the chart each second
 							var series = this.series[0];
 							setInterval(function() {
+							for (k=0;k<5;k++){
+									series.addPoint(points[loaded++]);
+								}
 								series.addPoint(points[loaded++], true, true);
-							}, 	1);
+							}, 	50);
 						}
 					}
 				},
@@ -62,13 +65,13 @@
 				},
 				
 				series: [{
-				turboThreshold: 3000,
+				turboThreshold: 0,
 				name: "DoubleBottomStrategy",
 					 data: (function() {
                     // generate an array of random data
                     var data = [];
     
-                    for (loaded = 0; loaded <= 2500; loaded++) {
+                    for (loaded = 0; loaded <= 2000; loaded++) {
                         data.push(points[loaded]);
                     }
                     return data;
@@ -111,7 +114,7 @@
 					sym = 'square';
 					chAmountAndShares = true;
 				}
-				else if (parseInt(parts[6]) == 1){
+				if (parseInt(parts[6]) == 1){
 					en = true;
 					color = 'violet';
 					sym = 'square';
@@ -119,8 +122,8 @@
 				}
 				
 				if (i == 0 || chAmountAndShares == true){
-                    $('#amount').text('Money ' + parseInt(parts[9]));
-                    $('#shares').text('Shares ' + parseInt(parts[10]));
+					$('#amount').text('Money ' + parseInt(parts[9]));
+					$('#shares').text('Shares ' + parseInt(parts[10]));
 				}
 				
 				points[j] = {
