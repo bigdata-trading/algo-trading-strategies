@@ -24,12 +24,21 @@ public class GA {
     //public static StockParameters stock_parameters = new StockParameters();
 
 
+/*
     public static void send_values(long time, double price) {
 
         for (int i = 0; i < population.size(); i++) {
             population.getIndividual(i).trade(time, price);
         }
     }
+*/
+public static void send_values(Tick tick) {
+
+    for (int i = 0; i < population.size(); i++) {
+        population.getIndividual(i).trade(tick);
+    }
+}
+
 
     public static void main(String[] args) {
         double money = 0;
@@ -47,7 +56,9 @@ public class GA {
                     for (int i = 0; i < 5; i++) {
                         List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[generationCount+i]);
                         for (Tick tick : ticks) {
-                            send_values(tick.getTimestamp(), tick.getPrice());
+                            //send_values(tick.getTimestamp(), tick.getPrice());
+                            //population.getIndividual(i).trade(tick);
+                            send_values(tick);
                         }
                     }
 
@@ -79,7 +90,8 @@ public class GA {
                 try {
                     List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[generationCount]);
                     for (Tick tick : ticks) {
-                        indiv.trade(tick.getTimestamp(), tick.getPrice());
+                        //indiv.trade(tick.getTimestamp(), tick.getPrice());
+                        indiv.trade(tick);
                     }
 
                     //profit += indiv.getFitness() - Constants.STARTING_MONEY;
