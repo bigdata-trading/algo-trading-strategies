@@ -37,8 +37,22 @@ public class DoubleTop extends FitnessFunction {
     }
 
     protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {
+
+        int toRet = 0;
+
+        if (logForViz) {
+            vizLog.append(order + "" + transaction.getTimestamp());
+            vizLog.append("," + transaction.getPrice());
+        }
+
         lastPrice = transaction.getPrice();
         sp.calculate(transaction.getTimestamp(), lastPrice);
+
+        int sold = 0;
+        int bought = 0;
+        long t1ts = -1;
+        long bts = -1;
+        long t2ts = -1;
 
         if (first) {
             numOfShares = (int) Math.floor(startingAmountOfMoney / lastPrice);
@@ -50,43 +64,75 @@ public class DoubleTop extends FitnessFunction {
             if (lastPrice >= buyLoss) {
                 top1 = lastPrice;
                 buy();
-                return 1;
+                toRet = 1;
+                t2ts = bts = -1;
+                t1ts = transaction.getTimestamp();
             } else if (lastPrice <= buyGain) {
                 top1 = top2;
                 buy();
-                bottom = lastPrice;
-                return 1;
+                toRet = 1;
+                t2ts = bts = -1;
+                if ((top1 - lastPrice) >= chr.getGenes().get(GENE_TOP_1).getValue()) {
+                    bottom = lastPrice;
+                    bts = transaction.getTimestamp();
+                }
+                t1ts = transaction.getTimestamp();
             }
         } else {
             if (top1 == -1) {
-                if(sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue()) {
+                if (sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue()) {
                     top1 = lastPrice;
+                    t1ts = transaction.getTimestamp();
                 }
             } else if (bottom == -1) {
                 if (lastPrice > top1) {
                     top1 = lastPrice;
+                    t1ts = transaction.getTimestamp();
                 } else if ((top1 - lastPrice) >= chr.getGenes().get(GENE_TOP_1).getValue()) {
                     bottom = lastPrice;
+                    bts = transaction.getTimestamp();
                 }
             } else if (top2 == -1) {
                 if (lastPrice < bottom) {
                     bottom = lastPrice;
+                    bts = transaction.getTimestamp();
                 } else if ((lastPrice - bottom) >= chr.getGenes().get(GENE_TOP_2).getValue()) {
                     top2 = lastPrice;
+                    t2ts = transaction.getTimestamp();
 
                     //sell
                     openPosition = true;
+                    sold = 1;
+                    toRet = 1;
                     amount += numOfShares * lastPrice;
                     numOfShares = 0;
                     double avg = top1 - bottom + top2 - bottom;
                     avg /= 2;
                     buyLoss = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
                     buyGain = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
-                    return 1;
                 }
             }
         }
-        return 0;
+
+        if (logForViz) {
+            if (t1ts > 0) vizLog.append("," + order + "" + t1ts);
+            else vizLog.append("," + t1ts);
+
+            if (bts > 0) vizLog.append("," + order + "" + bts);
+            else vizLog.append("," + bts);
+
+            if (t2ts > 0) vizLog.append("," + order + "" + t2ts);
+            else vizLog.append("," + t2ts);
+            vizLog.append("," + bought);
+            vizLog.append("," + sold);
+            vizLog.append("," + buyGain);
+            vizLog.append("," + buyLoss);
+            if (sold == 1 || bought == 1 || order == 0) {
+                vizLog.append("," + amount + "," + numOfShares);
+            }
+            vizLog.append("\n");
+        }
+        return toRet;
     }
 
     protected void init() {
@@ -109,7 +155,7 @@ public class DoubleTop extends FitnessFunction {
         top2 = bottom = -1;
     }
 
-    public static List<Range> getGeneRanges(){
+    public static List<Range> getGeneRanges() {
         List<Range> ranges = new LinkedList<Range>();
 
         ranges.add(new Range(0, 0.1));

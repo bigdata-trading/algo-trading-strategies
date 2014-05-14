@@ -1,0 +1,161 @@
+<html>
+<head>
+
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+	<script type="text/javascript">
+	
+	var timestamps = [];
+	var prices = [];
+	
+	var points = [];
+	
+	var chart;
+	var loaded=0;
+	
+	$(function(){
+		function drawChart(){
+		
+			$('#container').highcharts({
+				chart: {
+					type: 'spline',
+					animation: Highcharts.svg, // don't animate in old IE
+					marginRight: 10,
+					events: {
+						load: function() {
+		
+							// set up the updating of the chart each second
+							var series = this.series[0];
+							setInterval(function() {
+								for (k=0;k<5;k++){
+									series.addPoint(points[loaded++]);
+								}
+								series.addPoint(points[loaded++], true, true);
+							}, 	50);
+							
+						}
+					}
+				},
+				title: {
+					text: 'Head And Shoulders'
+				},
+				xAxis: {
+					title: {
+						text: 'Timestamp'
+					}
+				},
+				yAxis: {
+					title: {
+						text: 'Price'
+					}
+				},
+				tooltip: {
+					crosshairs: true,
+					shared: true
+				},
+				
+				series: [{
+				turboThreshold: 0,
+				name: "Head And Shoulders",
+					 data: (function() {
+                    // generate an array of random data
+                    var data = [];
+    
+                    for (loaded = 0; loaded <= 2000; loaded++) {
+                        data.push(points[loaded]);
+                    }
+                    return data;
+                })()
+				}]
+			});
+		
+		}
+		
+	
+	
+		$.get("statHeadShoulders.csv", function(data){	
+			var lines = data.split("\n");
+			var j = 0;
+			for (i = 0; i < lines.length; i++) {
+				var parts = lines[i].split(",");
+				
+				if (j != 0){
+					if (parseInt(parts[0]) === timestamps[j-1]) continue;
+				}
+				
+				var en = false;
+				var sym = 'circle';
+				var color = 'blue';
+				if (parseInt(parts[0]) == parseInt(parts[2]) || parseInt(parts[0]) == parseInt(parts[6])){
+					en = true;
+					color = 'yellow';
+					}
+				if ( parseInt(parts[0]) == parseInt(parts[3]) || parseInt(parts[0]) == parseInt(parts[5])){
+					en = true;
+					color = 'green';
+					}
+				if (parseInt(parts[0]) == parseInt(parts[4])){
+					en = true;
+					color = 'red';
+				}
+				
+				var chAmountAndShares = false;
+				if (parseInt(parts[7]) == 1){
+					en = true;
+					color = 'orange';
+					sym = 'square';
+					chAmountAndShares = true;
+				}
+				if (parseInt(parts[8]) == 1){
+					en = true;
+					color = 'violet';
+					sym = 'square';
+					chAmountAndShares = true;
+				}
+				
+				if (i == 0 || chAmountAndShares == true){
+					$('#amount').text('Money ' + parseInt(parts[11]));
+					$('#shares').text('Shares ' + parseInt(parts[12]));
+				}
+				
+				points[j] = {
+					x:parseInt(parts[0]),
+					y:parseFloat(parts[1]),
+					marker: {
+						enabled: en,
+						symbol: sym,
+						fillColor: color
+					}
+				};
+				
+				timestamps[j] = parseInt(parts[0]);
+				prices[j] = parseFloat(parts[1]);
+				
+				j++;
+				//$('#char').text(prices[j]);
+				//if (j==10000) break;
+				
+			}
+			drawChart();
+		});
+	
+	});
+	</script>
+</head>
+
+<body>
+
+    
+	<div id="container" style="min-width: 310px; height: 1000px; margin: 0 auto"></div>
+	<div class="amount" id="amount" name="amount">
+		
+    </div>
+	<div class="shares" id="shares" name="shares">
+		
+    </div>
+</body>
+</html>

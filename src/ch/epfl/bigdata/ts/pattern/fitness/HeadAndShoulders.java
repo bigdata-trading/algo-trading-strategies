@@ -39,6 +39,23 @@ public class HeadAndShoulders extends FitnessFunction {
     }
 
     protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {
+
+        int toRet = 0;
+
+        if (logForViz) {
+            vizLog.append(order + "" + transaction.getTimestamp());
+            vizLog.append("," + transaction.getPrice());
+        }
+
+
+        int sold = 0;
+        int bought = 0;
+        long sh1ts = -1;
+        long b1ts = -1;
+        long hts = -1;
+        long b2ts = -1;
+        long sh2ts = -1;
+
         lastPrice = transaction.getPrice();
         long lastTs = transaction.getTimestamp();
 
@@ -52,72 +69,112 @@ public class HeadAndShoulders extends FitnessFunction {
         if (openPosition) {
             if (lastPrice >= buyLoss) {
                 buy(); //TODO: check if another pattern should start somewhere
-                return 1;
+                bought = 1;
+                sh1ts = b1ts = hts = b2ts = sh2ts = -1;
+                toRet = 1;
             } else if (lastPrice <= buyGain) {
                 buy();
-                return 1;
+                sh1ts = b1ts = hts = b2ts = sh2ts = -1;
+                toRet = 1;
             }
         } else {
             if (shoulder1 == -1) {
                 if (sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue()) {
                     shoulder1 = lastPrice;
+                    sh1ts = transaction.getTimestamp();
                 }
             } else if (bottom1 == -1) {
                 if (lastPrice > shoulder1) {
                     shoulder1 = lastPrice;
+                    sh1ts = transaction.getTimestamp();
                 } else if (shoulder1 - lastPrice >= chr.getGenes().get(GENE_BOTTOM_SHOULDER).getValue()) {
                     bottom1 = lastPrice;
                     bottom1Ts = lastTs;
+                    b1ts = transaction.getTimestamp();
                 }
-            } else if(head == -1) {
-                if(lastPrice < bottom1) {
+            } else if (head == -1) {
+                if (lastPrice < bottom1) {
                     bottom1 = lastPrice;
                     bottom1Ts = lastTs;
-                } else if(lastPrice - shoulder1 >= chr.getGenes().get(GENE_SHOULDER_HEAD).getValue()) {
+                    b1ts = transaction.getTimestamp();
+                } else if (lastPrice - shoulder1 >= chr.getGenes().get(GENE_SHOULDER_HEAD).getValue()) {
                     head = lastPrice;
+                    hts = transaction.getTimestamp();
                 }
-            } else if(bottom2 == -1) {
-                if(lastPrice > head) {
+            } else if (bottom2 == -1) {
+                if (lastPrice > head) {
                     head = lastPrice;
-                } else if(lastPrice >= bottom1) {
+                    hts = transaction.getTimestamp();
+                } else if (lastPrice >= bottom1) {
                     bottom2 = lastPrice;
                     bottom2Ts = lastTs;
+                    b2ts = transaction.getTimestamp();
                 } else {
                     initPattern();
                 }
-            } else if(shoulder2 == -1) {
-                if(lastPrice < bottom2) {
-                    if(lastPrice >= bottom1) {
+            } else if (shoulder2 == -1) {
+                if (lastPrice < bottom2) {
+                    if (lastPrice >= bottom1) {
                         bottom2 = lastPrice;
                         bottom2Ts = lastTs;
+                        b2ts = transaction.getTimestamp();
                     } else {
                         initPattern();
                     }
-                } else if(lastPrice < head) {
+                } else if (lastPrice < head) {
                     shoulder2 = lastPrice;
                     necklinea = (bottom2 - bottom1) / (bottom2Ts - bottom1Ts);
                     necklineb = bottom2 - bottom2Ts * necklinea;
+                    sh2ts = transaction.getTimestamp();
                 }
             } else {
-                    if(lastPrice > shoulder2) {
-                        if(lastPrice < head) {
-                            shoulder2 = lastPrice;
-                        } else {
-                            initPattern();
-                        }
-                    } else if(lastPrice <= lastTs * necklinea + necklineb) {
-                        //sell
-                        openPosition = true;
-                        amount += numOfShares * lastPrice;
-                        numOfShares = 0;
-                        double avg = head - (bottom1 + bottom2) / 2;
-                        buyLoss = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
-                        buyGain = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
-                        return 1;
+                if (lastPrice > shoulder2) {
+                    if (lastPrice < head) {
+                        shoulder2 = lastPrice;
+                        sh2ts = transaction.getTimestamp();
+                    } else {
+                        initPattern();
                     }
+                } else if (lastPrice <= lastTs * necklinea + necklineb) {
+                    //sell
+                    openPosition = true;
+                    amount += numOfShares * lastPrice;
+                    numOfShares = 0;
+                    double avg = head - (bottom1 + bottom2) / 2;
+                    buyLoss = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
+                    buyGain = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
+                    toRet = 1;
+                    sold = 1;
+                }
             }
         }
-        return 0;
+
+        if (logForViz) {
+
+            if (sh1ts > 0) vizLog.append("," + order + "" + sh1ts);
+            else vizLog.append("," + sh1ts);
+
+            if (b1ts > 0) vizLog.append("," + order + "" + b1ts);
+            else vizLog.append("," + b1ts);
+
+            if (hts > 0) vizLog.append("," + order + "" + hts);
+            else vizLog.append("," + hts);
+
+            if (b2ts > 0) vizLog.append("," + order + "" + b2ts);
+            else vizLog.append("," + b2ts);
+
+            if (sh2ts > 0) vizLog.append("," + order + "" + sh2ts);
+            else vizLog.append("," + sh2ts);
+            vizLog.append("," + bought);
+            vizLog.append("," + sold);
+            vizLog.append("," + buyGain);
+            vizLog.append("," + buyLoss);
+            if (sold == 1 || bought == 1 || order == 0) {
+                vizLog.append("," + amount + "," + numOfShares);
+            }
+            vizLog.append("\n");
+        }
+        return toRet;
     }
 
     private void initPattern() {
@@ -144,7 +201,7 @@ public class HeadAndShoulders extends FitnessFunction {
         initPattern();
     }
 
-    public static List<Range> getGeneRanges(){
+    public static List<Range> getGeneRanges() {
         List<Range> ranges = new LinkedList<Range>();
 
         ranges.add(new Range(0, 0.4));
@@ -156,7 +213,7 @@ public class HeadAndShoulders extends FitnessFunction {
         return ranges;
     }
 
-    public String getName(){
+    public String getName() {
         return "HeadAndShoulders";
     }
 }
