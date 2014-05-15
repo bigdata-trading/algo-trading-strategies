@@ -18,5 +18,4 @@ public class Range {
     public double getUpper() {
         return upper;
     }
-
 }

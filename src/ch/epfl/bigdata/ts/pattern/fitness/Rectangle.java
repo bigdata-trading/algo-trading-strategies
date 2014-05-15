@@ -14,6 +14,16 @@ public class Rectangle extends FitnessFunction {
     public static final int GENE_PROTECT_SELL_LOSS = 3;
     public static final int GENE_TREND_STRENGTH = 4;
 
+
+    private static List<Range> ranges = new LinkedList<Range>();
+    {
+        ranges.add(new Range(0.25, 0.4));
+        ranges.add(new Range(0.3, 0.6));
+        ranges.add(new Range(0.5, 1));
+        ranges.add(new Range(0.1, 0.4));
+        ranges.add(new Range(0, 50));
+    }
+
     private double bottom1, bottom2;
     private double top1, top2;
 
@@ -36,7 +46,7 @@ public class Rectangle extends FitnessFunction {
         lastPrice = transaction.getPrice();
 
         sp.calculate(transaction.getTimestamp(), lastPrice);
-        boolean wellEstablishedTrend = sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue();
+        boolean wellEstablishedTrend = sp.getTrendStrength() >= chr.getGeneValue(GENE_TREND_STRENGTH);
 
         if (openPosition) {
             if (lastPrice <= sellLoss) {
@@ -57,18 +67,18 @@ public class Rectangle extends FitnessFunction {
             } else if (bottom1 == -1) {
                 if (wellEstablishedTrend && lastPrice > top1) {
                     top1 = lastPrice;
-                } else if (top1 - lastPrice >= chr.getGenes().get(GENE_DIST_EQUAL_LEVELS).getValue()) {
+                } else if (top1 - lastPrice >= chr.getGeneValue(GENE_DIST_EQUAL_LEVELS)) {
                     bottom1 = lastPrice;
                 }
             } else if (top2 == -1) {
                 if (lastPrice < bottom1) {
                     bottom1 = lastPrice;
-                } else if (Math.abs(top1 - lastPrice) <= chr.getGenes().get(GENE_DIFF_TOPS).getValue()) {
+                } else if (Math.abs(top1 - lastPrice) <= chr.getGeneValue(GENE_DIFF_TOPS)) {
                     top2 = lastPrice;
                 }
             } else if (bottom2 == -1) {
                 if (lastPrice > top2) {
-                    if (Math.abs(top1 - lastPrice) <= chr.getGenes().get(GENE_DIFF_TOPS).getValue()) {
+                    if (Math.abs(top1 - lastPrice) <= chr.getGeneValue(GENE_DIFF_TOPS)) {
                         top2 = lastPrice;
                     } else {
                         initPattern();
@@ -76,12 +86,12 @@ public class Rectangle extends FitnessFunction {
                             top1 = lastPrice;
                         }
                     }
-                } else if (Math.abs(bottom1 - lastPrice) <= chr.getGenes().get(GENE_DIFF_TOPS).getValue()) {
+                } else if (Math.abs(bottom1 - lastPrice) <= chr.getGeneValue(GENE_DIFF_TOPS)) {
                     bottom2 = lastPrice;
                 }
             } else {
                 if (lastPrice < bottom2) {
-                    if (Math.abs(bottom2 - lastPrice) <= chr.getGenes().get(GENE_DIFF_TOPS).getValue()) {
+                    if (Math.abs(bottom2 - lastPrice) <= chr.getGeneValue(GENE_DIFF_TOPS)) {
                         bottom2 = lastPrice;
                     } else {
                         initPattern();
@@ -96,8 +106,8 @@ public class Rectangle extends FitnessFunction {
                     amount -= numOfShares * lastPrice;
                     double avg = top1 - bottom1 + top2 - bottom2;
                     avg /= 2;
-                    sellLoss = lastPrice - chr.getGenes().get(GENE_PROTECT_SELL_LOSS).getValue() * avg;
-                    sellGain = lastPrice + chr.getGenes().get(GENE_PROTECT_SELL_GAIN).getValue() * avg;
+                    sellLoss = lastPrice - chr.getGeneValue(GENE_PROTECT_SELL_LOSS) * avg;
+                    sellGain = lastPrice + chr.getGeneValue(GENE_PROTECT_SELL_GAIN) * avg;
                     return 1;
                 }
             }
@@ -128,14 +138,6 @@ public class Rectangle extends FitnessFunction {
     }
 
     public static List<Range> getGeneRanges() {
-        List<Range> ranges = new LinkedList<Range>();
-
-        ranges.add(new Range(0.25, 0.4));
-        ranges.add(new Range(0.3, 0.6));
-        ranges.add(new Range(0.5, 1));
-        ranges.add(new Range(0.1, 0.4));
-        ranges.add(new Range(0, 50));
-
         return ranges;
     }
 }

@@ -15,6 +15,21 @@ public class DoubleTop extends FitnessFunction {
     public static final int GENE_PROTECT_BUY_LOSS = 3;
     public static final int GENE_TREND_STRENGTH = 4;
 
+    private static List<Range> ranges = new LinkedList<Range>();
+    {
+        ranges.add(new Range(0, 0.1));
+        ranges.add(new Range(0, 0.1));
+        ranges.add(new Range(0.1, 0.4));
+        ranges.add(new Range(0.1, 0.4));
+        ranges.add(new Range(0, 40));
+
+        /*ranges.add(new Range(0, 0.3));
+        ranges.add(new Range(0, 0.3));
+        ranges.add(new Range(0.3, 0.7));
+        ranges.add(new Range(0.1, 0.3));
+        ranges.add(new Range(20, 50));*/
+    }
+
     private double top1;
     private double top2;
     private double bottom;
@@ -59,19 +74,19 @@ public class DoubleTop extends FitnessFunction {
             }
         } else {
             if (top1 == -1) {
-                if(sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue()) {
+                if(sp.getTrendStrength() >= chr.getGeneValue(GENE_TREND_STRENGTH)) {
                     top1 = lastPrice;
                 }
             } else if (bottom == -1) {
                 if (lastPrice > top1) {
                     top1 = lastPrice;
-                } else if ((top1 - lastPrice) >= chr.getGenes().get(GENE_TOP_1).getValue()) {
+                } else if ((top1 - lastPrice) >= chr.getGeneValue(GENE_TOP_1)) {
                     bottom = lastPrice;
                 }
             } else if (top2 == -1) {
                 if (lastPrice < bottom) {
                     bottom = lastPrice;
-                } else if ((lastPrice - bottom) >= chr.getGenes().get(GENE_TOP_2).getValue()) {
+                } else if ((lastPrice - bottom) >= chr.getGeneValue(GENE_TOP_2)) {
                     top2 = lastPrice;
 
                     //sell
@@ -80,8 +95,8 @@ public class DoubleTop extends FitnessFunction {
                     numOfShares = 0;
                     double avg = top1 - bottom + top2 - bottom;
                     avg /= 2;
-                    buyLoss = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
-                    buyGain = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
+                    buyLoss = lastPrice + chr.getGeneValue(GENE_PROTECT_BUY_LOSS) * avg;
+                    buyGain = lastPrice - chr.getGeneValue(GENE_PROTECT_BUY_GAIN) * avg;
                     return 1;
                 }
             }
@@ -110,20 +125,6 @@ public class DoubleTop extends FitnessFunction {
     }
 
     public static List<Range> getGeneRanges(){
-        List<Range> ranges = new LinkedList<Range>();
-
-        ranges.add(new Range(0, 0.1));
-        ranges.add(new Range(0, 0.1));
-        ranges.add(new Range(0.1, 0.4));
-        ranges.add(new Range(0.1, 0.4));
-        ranges.add(new Range(0, 40));
-
-        /*ranges.add(new Range(0, 0.3));
-        ranges.add(new Range(0, 0.3));
-        ranges.add(new Range(0.3, 0.7));
-        ranges.add(new Range(0.1, 0.3));
-        ranges.add(new Range(20, 50));*/
-
         return ranges;
     }
 }

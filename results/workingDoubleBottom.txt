@@ -16,7 +16,7 @@ a 0.17051352212352222 b 0.06262786718800861 c 0.4715300432071371 d 0.24217150665
 Fitness: 2988.0
 Number of transactions: 30
 
-This genes work with DoubleBottom with the constructor DoubleBottom doubleBottom = new DoubleBottom(8, 3000, 8, 25);
+This genesBits work with DoubleBottom with the constructor DoubleBottom doubleBottom = new DoubleBottom(8, 3000, 8, 25);
 
 With rankSelection and OnePointCrossover
 

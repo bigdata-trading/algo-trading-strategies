@@ -2,6 +2,7 @@ package ch.epfl.bigdata.ts.ga;
 
 import ch.epfl.bigdata.ts.ga.crossover.CrossoverMethod;
 import ch.epfl.bigdata.ts.ga.crossover.SinglePointCrossover;
+import ch.epfl.bigdata.ts.ga.crossover.UniformCrossover;
 import ch.epfl.bigdata.ts.ga.mutation.MutationMethod;
 import ch.epfl.bigdata.ts.ga.mutation.UniformMutation;
 import ch.epfl.bigdata.ts.ga.selection.RouletteWheelSelection;
@@ -15,15 +16,14 @@ import java.util.*;
 
 public class Training extends Thread {
 
-    private static int NUM_OF_CHROMOSOMES = 20;
-    public static int NUM_OF_ITERATIONS = 5;
+    private static int NUM_OF_CHROMOSOMES = 50;
+    public static int NUM_OF_ITERATIONS = 3;
 
     private List<Range> range = null;
     private List<Chromosome> bestChromosomes = new LinkedList<Chromosome>();
 
-
     private SelectionMethod selMethod = new RouletteWheelSelection();
-    private CrossoverMethod crossMethod = new SinglePointCrossover();
+    private CrossoverMethod crossMethod = new UniformCrossover(); //new SinglePointCrossover();
     private MutationMethod mutatMethod = new UniformMutation();
 
     private FitnessFunction fitnessFunction = null;
@@ -59,16 +59,11 @@ public class Training extends Thread {
                 chromosomes.clear();
 
                 for (int i = 0; i < NUM_OF_CHROMOSOMES; i++) {
-
-                    List<Gene> genes = new LinkedList<Gene>();
-                    for (int k=0; k<range.size(); k++) {
-                        double lower = range.get(k).getLower();
-                        double upper = range.get(k).getUpper();
-                        double val = lower + (upper - lower) * random.nextDouble();
-                        Gene gene = new Gene(Integer.toString(k), val);
-                        genes.add(gene);
+                    byte[] genesBits = new byte[range.size() * GeneticAlgorithm.GENE_LENGTH];
+                    for (int k = 0; k < genesBits.length; k++) {
+                        genesBits[k] = (byte) Range.R.nextInt(2);
                     }
-                    Chromosome chr = new Chromosome(genes);
+                    Chromosome chr = new Chromosome(genesBits, range);
                     chromosomes.add(chr);
                 }
 

@@ -22,9 +22,9 @@ public class Main {
         List<Training> strategies = new LinkedList<Training>();
         //strategies.add(new Training(DoubleBottom.getName(), DoubleBottom.getGeneRanges(), new DoubleBottom(numOfDays, startMoney, generationWindow, startData)));
         strategies.add(new Training(HeadAndShoulders.getGeneRanges(), new HeadAndShoulders(numOfDays, startMoney, generationWindow, startData), startData));
-        strategies.add(new Training(Rectangle.getGeneRanges(), new Rectangle(numOfDays, startMoney, generationWindow, startData), startData));
-        strategies.add(new Training(DoubleBottom.getGeneRanges(), new DoubleBottom(numOfDays, startMoney, generationWindow, startData), startData));
-        strategies.add(new Training(DoubleTop.getGeneRanges(), new DoubleTop(numOfDays, startMoney, generationWindow, startData), startData));
+        //strategies.add(new Training(Rectangle.getGeneRanges(), new Rectangle(numOfDays, startMoney, generationWindow, startData), startData));
+        //strategies.add(new Training(DoubleBottom.getGeneRanges(), new DoubleBottom(numOfDays, startMoney, generationWindow, startData), startData));
+        //strategies.add(new Training(DoubleTop.getGeneRanges(), new DoubleTop(numOfDays, startMoney, generationWindow, startData), startData));
 
         //     strategies.add(new Training(DoubleBottom.getName(), DoubleBottom.getGeneRanges(), new Rectangle(numOfDays, startMoney, generationWindow, startData)));
 

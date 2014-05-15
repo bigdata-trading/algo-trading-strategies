@@ -15,6 +15,21 @@ public class DoubleBottom extends FitnessFunction {
     public static final int GENE_PROTECT_SELL_LOSS = 3;
     public static final int GENE_TREND_STRENGTH = 4;
 
+    private static List<Range> ranges = new LinkedList<Range>();
+    {
+        /*ranges.add(new Range(0, 0.3));
+        ranges.add(new Range(0, 0.3));
+        ranges.add(new Range(0.3, 0.7));
+        ranges.add(new Range(0.1, 0.3));
+        ranges.add(new Range(20, 50));*/
+
+        ranges.add(new Range(0, 0.3));       /* first bottom-top difference */
+        ranges.add(new Range(0, 1));       /* second top-bottom difference */
+        ranges.add(new Range(0.1, 0.5));   /* percentage of protection gain */
+        ranges.add(new Range(0.1, 0.3));   /* percentage of protection loose */
+        ranges.add(new Range(0, 50));     // established trend
+    }
+
     private double bottom1;
     private double bottom2;
     private double top;
@@ -67,8 +82,8 @@ public class DoubleBottom extends FitnessFunction {
                 amount -= numOfShares * lastPrice;
                 double avg = top - bottom1 + top - bottom2;
                 avg /= 2;
-                sellLoss = lastPrice - chr.getGenes().get(GENE_PROTECT_SELL_LOSS).getValue() * avg;
-                sellGain = lastPrice + chr.getGenes().get(GENE_PROTECT_SELL_GAIN).getValue() * avg;
+                sellLoss = lastPrice - chr.getGeneValue(GENE_PROTECT_SELL_LOSS) * avg;
+                sellGain = lastPrice + chr.getGeneValue(GENE_PROTECT_SELL_GAIN)  * avg;
                 toRet = 1;
                 bought = 1;
 
@@ -80,7 +95,7 @@ public class DoubleBottom extends FitnessFunction {
                 } else if (lastPrice >= sellGain) {
                     sell = SELL_WITH_GAIN;
                     bottom1 = bottom2;
-                    if ((lastPrice - bottom1) >= chr.getGenes().get(GENE_BOTTOM_1).getValue()) {
+                    if ((lastPrice - bottom1) >= chr.getGeneValue(GENE_BOTTOM_1)) {
                         top = lastPrice;
                         tts = transaction.getTimestamp();
                     }
@@ -88,7 +103,7 @@ public class DoubleBottom extends FitnessFunction {
             }
         } else {
             if (bottom1 == -1) {
-                if (-sp.getTrendStrength() >= chr.getGenes().get(GENE_TREND_STRENGTH).getValue()) {
+                if (-sp.getTrendStrength() >= chr.getGeneValue(GENE_TREND_STRENGTH)) {
                     bottom1 = lastPrice;
                     b1ts = transaction.getTimestamp();
                 }
@@ -96,7 +111,7 @@ public class DoubleBottom extends FitnessFunction {
                 if (lastPrice < bottom1) {
                     bottom1 = lastPrice;
                     b1ts = transaction.getTimestamp();
-                } else if ((lastPrice - bottom1) >= chr.getGenes().get(GENE_BOTTOM_1).getValue()) {
+                } else if ((lastPrice - bottom1) >= chr.getGeneValue(GENE_BOTTOM_1)) {
                     top = lastPrice;
                     tts = transaction.getTimestamp();
                 }
@@ -104,7 +119,7 @@ public class DoubleBottom extends FitnessFunction {
                 if (lastPrice > top) {
                     top = lastPrice;
                     tts = transaction.getTimestamp();
-                } else if ((top - lastPrice) >= chr.getGenes().get(GENE_BOTTOM_2).getValue()) {
+                } else if ((top - lastPrice) >= chr.getGeneValue(GENE_BOTTOM_2)) {
                     bottom2 = lastPrice;
                     b2ts = transaction.getTimestamp();
                 }
@@ -168,14 +183,6 @@ public class DoubleBottom extends FitnessFunction {
     }
 
     public static List<Range> getGeneRanges() {
-        List<Range> ranges = new LinkedList<Range>();
-
-        ranges.add(new Range(0, 0.3));
-        ranges.add(new Range(0, 0.3));
-        ranges.add(new Range(0.3, 0.7));
-        ranges.add(new Range(0.1, 0.3));
-        ranges.add(new Range(20, 50));
-
         return ranges;
     }
 
