@@ -129,7 +129,7 @@ public class HeadAndShoulders extends FitnessFunction {
                     sh2ts = transaction.getTimestamp();
                 }
             } else {
-                    if (lastPrice > shoulder2) {
+                    if (lastPrice - head >= chr.getGenes().get(GENE_SHOULDER_HEAD).getValue()){
                         if (lastPrice < head) {
                             shoulder2 = lastPrice;
                             sh2ts = transaction.getTimestamp();
