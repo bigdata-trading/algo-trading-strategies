@@ -1,0 +1,51 @@
+NUM_OF_CHROMOSOMES = 20
+ITERATION #0
+gene1 0.3059439880446553 gene2 0.015037190906042608 
+Fitness: 3010.3799999999997
+Number of transactions: 5
+This took 14794 milliseconds
+ITERATION #1
+gene1 0.6805270375003503 gene2 0.19591666851263845 
+Fitness: 37.5600000000004
+Number of transactions: 11
+This took 22800 milliseconds
+ITERATION #2
+gene1 0.4513786352778447 gene2 0.22388598374218538 
+Fitness: 2993.76
+Number of transactions: 7
+This took 19865 milliseconds
+ITERATION #3
+gene1 0.8333539781168671 gene2 0.6131014967445425 
+Fitness: 3053.7699999999995
+Number of transactions: 12
+This took 16856 milliseconds
+ITERATION #4
+gene1 0.2088560363297226 gene2 0.8209775450176532 
+Fitness: 3040.6850000000004
+Number of transactions: 14
+This took 16286 milliseconds
+ITERATION #5
+gene1 0.7773212085288774 gene2 0.5260551174204886 
+Fitness: 3059.455000000001
+Number of transactions: 8
+This took 15164 milliseconds
+ITERATION #6
+gene1 0.501565879707768 gene2 0.795239342838122 
+Fitness: 3036.3699999999994
+Number of transactions: 6
+This took 14788 milliseconds
+ITERATION #7
+gene1 0.49994446652564617 gene2 0.8191377471520791 
+Fitness: 3030.58
+Number of transactions: 5
+This took 15037 milliseconds
+ITERATION #8
+gene1 0.8792423511538874 gene2 0.10439263794901377 
+Fitness: 3027.01
+Number of transactions: 4
+This took 15044 milliseconds
+ITERATION #9
+gene1 0.3223051321395065 gene2 0.23550711571845284 
+Fitness: 3013.970000000001
+Number of transactions: 7
+This took 15856 milliseconds

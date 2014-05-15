@@ -1,0 +1,72 @@
+Evaluation phase
+gene1 0.3059439880446553 gene2 0.015037190906042608 
+Fitness: 20.870000000000346
+Number of transactions: 20
+This took 15 milliseconds
+END OF ITERATION #0
+
+Evaluation phase
+gene1 0.6805270375003503 gene2 0.19591666851263845 
+Fitness: 30.100000000000364
+Number of transactions: 27
+This took 29 milliseconds
+END OF ITERATION #1
+
+Evaluation phase
+gene1 0.4513786352778447 gene2 0.22388598374218538 
+Fitness: 1.949999999999818
+Number of transactions: 27
+This took 43 milliseconds
+END OF ITERATION #2
+
+Evaluation phase
+gene1 0.8333539781168671 gene2 0.6131014967445425 
+Fitness: 25.859999999999673
+Number of transactions: 16
+This took 56 milliseconds
+END OF ITERATION #3
+
+Evaluation phase
+gene1 0.2088560363297226 gene2 0.8209775450176532 
+Fitness: 28.590000000000146
+Number of transactions: 15
+This took 70 milliseconds
+END OF ITERATION #4
+
+Evaluation phase
+gene1 0.7773212085288774 gene2 0.5260551174204886 
+Fitness: 16.05999999999949
+Number of transactions: 13
+This took 83 milliseconds
+END OF ITERATION #5
+
+Evaluation phase
+gene1 0.501565879707768 gene2 0.795239342838122 
+Fitness: 18.539999999999964
+Number of transactions: 22
+This took 96 milliseconds
+END OF ITERATION #6
+
+Evaluation phase
+gene1 0.49994446652564617 gene2 0.8191377471520791 
+Fitness: 9.849999999999909
+Number of transactions: 24
+This took 109 milliseconds
+END OF ITERATION #7
+
+Evaluation phase
+gene1 0.8792423511538874 gene2 0.10439263794901377 
+Fitness: 10.639999999999873
+Number of transactions: 21
+This took 122 milliseconds
+END OF ITERATION #8
+
+Evaluation phase
+gene1 0.3223051321395065 gene2 0.23550711571845284 
+Fitness: 7.480000000000018
+Number of transactions: 25
+This took 136 milliseconds
+END OF ITERATION #9
+
+AVERAGE CHROMOSOME FITNESS FOR 10 iterations is: 16.99399999999996
+AVERAGE CHROMOSOME TRANSACTIONS FOR 10 iterations is: 21.0
