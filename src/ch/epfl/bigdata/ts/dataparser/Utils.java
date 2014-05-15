@@ -11,7 +11,11 @@ import java.util.*;
 public class Utils {
 
     public static final String FILE_SUFFIX = "_MSFT_tick.csv";
-    public static final String pathToInput = "/home/dorwi/Workspace/EPFL/bigdata/project/algo-trading-strategies/data/";//put the absolute path to the data folder
+    public static final String pathToInput = "data\\";//put the absolute path to the data folder
+
+    public static final String  pathToEvaluation = "results\\evaluations\\";
+    public static final String  pathToTraining = "results\\trainings\\";
+    public static final String  pathToVisualisation = "results\\visualisations\\";
 
     public static final int STARTING_YEAR = 2014;
     public static final int STARTING_MONTH = 0;

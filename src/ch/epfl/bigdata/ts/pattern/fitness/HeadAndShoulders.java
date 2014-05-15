@@ -31,12 +31,12 @@ public class HeadAndShoulders extends FitnessFunction {
 
     private boolean first = true;
 
-    public HeadAndShoulders(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public HeadAndShoulders(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 
-    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        return new HeadAndShoulders(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        return new HeadAndShoulders(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 
     protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {

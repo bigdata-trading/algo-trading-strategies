@@ -31,17 +31,20 @@ public abstract class FitnessFunction {
     protected int numOfDaysInGeneration;
     protected int startForData;
 
+    protected long time;
+
     protected StockParameters sp = new StockParameters(true);
 
     protected Map<Integer, List<Tick>> data = new HashMap<Integer, List<Tick>>();
 
-    public FitnessFunction(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
+    public FitnessFunction(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
         // Year 2014, month 1 (Feb), day 21
         // numofDays = 18
         this.numOfDays = numOfDays;
         this.numOfDaysInGeneration = numOfDaysInGeneration;
         this.startingAmountOfMoney = startingAmountOfMoney;
         this.startForData = startForData;
+        this.time = time;
         for (int i = 0; i < numOfDays; i++) {
             try {
                 List<Tick> ticks = Utils.readCSV(Utils.dataFileNames[this.startForData + i]);
@@ -90,7 +93,7 @@ public abstract class FitnessFunction {
 
         PrintWriter pw = null;
         try {
-            pw = new PrintWriter("db-eval-log-viz.csv");
+            pw = new PrintWriter(Utils.pathToVisualisation + getName() + "_visualisation_" + time + ".csv");
             pw.write(vizLog.toString());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -113,5 +116,5 @@ public abstract class FitnessFunction {
 
     public abstract String getName();
 
-    public abstract FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData);
+    public abstract FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time);
 }

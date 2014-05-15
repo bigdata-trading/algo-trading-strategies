@@ -1,5 +1,6 @@
 package ch.epfl.bigdata.ts.ga;
 
+import ch.epfl.bigdata.ts.dataparser.Utils;
 import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
 
 import java.io.*;
@@ -7,33 +8,35 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Evaluation extends Thread{
+public class Evaluation extends Thread {
 
     public static int NUM_OF_CHROMOSOMES = 50;
 
     private FitnessFunction strategy;
     private List<Chromosome> chrsToEval;
+    private long time;
 
     private Chromosome bestChromosome;
 
-    public Evaluation(FitnessFunction fitnessFunction, List<Chromosome> chrs){
+    public Evaluation(FitnessFunction fitnessFunction, List<Chromosome> chrs, long time) {
         this.strategy = fitnessFunction;
         this.chrsToEval = chrs;
+        this.time = time;
     }
 
-    public void run(){
+    public void run() {
 
         FileWriter out = null;
 
         try {
-            out = new FileWriter(strategy.getName() + "_evaluation_" + (new Date()).getTime() + ".txt", true);
+            out = new FileWriter(Utils.pathToEvaluation + strategy.getName() + "_evaluation_" + time + ".txt", true);
 
 
             long startTime = System.currentTimeMillis();
 
             List<Chromosome> evalResults = new ArrayList<Chromosome>();
 
-            for (int i=0; i<chrsToEval.size(); i++) {
+            for (int i = 0; i < chrsToEval.size(); i++) {
                 Chromosome chr = evaluateChromosome(chrsToEval.get(i));
 
                 long endTime = System.currentTimeMillis();
@@ -78,7 +81,7 @@ public class Evaluation extends Thread{
         return chromosome;
     }
 
-    public Chromosome bestChromosome(){
+    public Chromosome bestChromosome() {
         return bestChromosome;
     }
 

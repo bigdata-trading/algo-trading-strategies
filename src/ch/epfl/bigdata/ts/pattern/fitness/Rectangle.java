@@ -20,16 +20,16 @@ public class Rectangle extends FitnessFunction {
     private double sellLoss;
     private double sellGain;
 
-    public Rectangle(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public Rectangle(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 
     public String getName() {
         return "Rectangle";
     }
 
-    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        return new Rectangle(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        return new Rectangle(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 
     protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {

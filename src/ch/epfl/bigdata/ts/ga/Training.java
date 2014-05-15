@@ -1,5 +1,6 @@
 package ch.epfl.bigdata.ts.ga;
 
+import ch.epfl.bigdata.ts.dataparser.Utils;
 import ch.epfl.bigdata.ts.ga.crossover.CrossoverMethod;
 import ch.epfl.bigdata.ts.ga.crossover.SinglePointCrossover;
 import ch.epfl.bigdata.ts.ga.mutation.MutationMethod;
@@ -29,17 +30,20 @@ public class Training extends Thread {
     private FitnessFunction fitnessFunction = null;
     private int startForData;
 
-    public Training(List<Range> range, FitnessFunction fitnessFunction, int startForData) {
+    private long time;
+
+    public Training(List<Range> range, FitnessFunction fitnessFunction, int startForData, long time) {
         this.range = range;
         this.fitnessFunction = fitnessFunction;
         this.startForData = startForData;
+        this.time = time;
     }
 
     public void run() {
         FileWriter out = null;
 
         try {
-            String fn = getStrategy().getName() + "_training_" + (new Date()).getTime() + ".txt";
+            String fn = Utils.pathToTraining + getStrategy().getName() + "_training_" + time + ".txt";
             try {
                 out = new FileWriter(fn, true);
             } catch (IOException e) {
@@ -61,7 +65,7 @@ public class Training extends Thread {
                 for (int i = 0; i < NUM_OF_CHROMOSOMES; i++) {
 
                     List<Gene> genes = new LinkedList<Gene>();
-                    for (int k=0; k<range.size(); k++) {
+                    for (int k = 0; k < range.size(); k++) {
                         double lower = range.get(k).getLower();
                         double upper = range.get(k).getUpper();
                         double val = lower + (upper - lower) * random.nextDouble();
@@ -73,7 +77,7 @@ public class Training extends Thread {
                 }
 
                 HashMap<String, Range> geneRange = new HashMap<String, Range>();
-                for (int k=0; k<range.size(); k++) {
+                for (int k = 0; k < range.size(); k++) {
                     geneRange.put(Integer.toString(k), range.get(k));
                 }
 

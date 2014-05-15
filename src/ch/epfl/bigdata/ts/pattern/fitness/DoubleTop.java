@@ -24,16 +24,16 @@ public class DoubleTop extends FitnessFunction {
 
     private boolean first = true;
 
-    public DoubleTop(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public DoubleTop(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 
     public String getName() {
         return "DoubleTop";
     }
 
-    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        return new DoubleTop(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        return new DoubleTop(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 
     protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {

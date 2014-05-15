@@ -22,8 +22,8 @@ public class DoubleBottom extends FitnessFunction {
     private double sellLoss;
     private double sellGain;
 
-    public DoubleBottom(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public DoubleBottom(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 
     protected int trade(Tick transaction, Chromosome chr, boolean logForViz, StringBuilder vizLog, int order) {
@@ -183,7 +183,7 @@ public class DoubleBottom extends FitnessFunction {
         return "DoubleBottom";
     }
 
-    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        return new DoubleBottom(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        return new DoubleBottom(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 }
