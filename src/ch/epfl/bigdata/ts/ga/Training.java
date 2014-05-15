@@ -9,6 +9,7 @@ import ch.epfl.bigdata.ts.ga.selection.RouletteWheelSelection;
 import ch.epfl.bigdata.ts.ga.selection.SelectionMethod;
 import ch.epfl.bigdata.ts.ga.util.Range;
 import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
+import ch.epfl.bigdata.ts.pattern.fitness.RandomFirtness;
 import ch.epfl.bigdata.ts.pattern.fitness.Rectangle;
 
 import java.io.*;
@@ -54,6 +55,16 @@ public class Training extends Thread {
 
             List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 
+            HashMap<String, Range> geneRange = new HashMap<String, Range>();
+            if(!(fitnessFunction instanceof RandomFirtness)) {
+                for (int k = 0; k < range.size(); k++) {
+                    geneRange.put(Integer.toString(k), range.get(k));
+                }
+            } else {
+                geneRange.put("gene1", new Range(0, 1));
+                geneRange.put("gene2", new Range(0, 1));
+            }
+
             for (int j = 0; j < NUM_OF_ITERATIONS; j++) {
 
                 out.append("ITERATION #" + j + "\n");
@@ -63,14 +74,18 @@ public class Training extends Thread {
                 chromosomes.clear();
 
                 for (int i = 0; i < NUM_OF_CHROMOSOMES; i++) {
-
                     List<Gene> genes = new LinkedList<Gene>();
-                    for (int k = 0; k < range.size(); k++) {
-                        double lower = range.get(k).getLower();
-                        double upper = range.get(k).getUpper();
-                        double val = lower + (upper - lower) * random.nextDouble();
-                        Gene gene = new Gene(Integer.toString(k), val);
-                        genes.add(gene);
+                    if(!(fitnessFunction instanceof RandomFirtness)) {
+                        for (int k = 0; k < range.size(); k++) {
+                            double lower = range.get(k).getLower();
+                            double upper = range.get(k).getUpper();
+                            double val = lower + (upper - lower) * random.nextDouble();
+                            Gene gene = new Gene(Integer.toString(k), val);
+                            genes.add(gene);
+                        }
+                    } else {
+                        genes.add(new Gene("gene1", random.nextDouble()));
+                        genes.add(new Gene("gene2", random.nextDouble()));
                     }
                     Chromosome chr = new Chromosome(genes);
                     chromosomes.add(chr);

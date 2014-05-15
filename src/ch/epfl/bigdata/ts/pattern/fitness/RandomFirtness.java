@@ -17,37 +17,42 @@ public class RandomFirtness extends FitnessFunction {
     public void calcFitness(Chromosome chr, boolean logForViz) {
 
         init();
+        int numberOfTransactions = 0;
 
-        for (int i = 0; i < numOfDays; i++) {
+        for (int i = 0; i < numOfDaysInGeneration; i++) {
 
             List<Tick> ticks1 = data.get(startForData + i);
 
             for (Tick tick : ticks1) {
-              trade(tick, chr, ticks1.size());
+                numberOfTransactions += trade(tick, chr, ticks1.size());
             }
 
-            i++;
-
         }
-        sell();
+
+        chr.setFitness(amount + numOfShares * lastPrice);
+        chr.setNumberOfTransactions(numberOfTransactions);
     }
 
-    private void trade(Tick transaction, Chromosome chr, int tickssize) {
+    private int trade(Tick transaction, Chromosome chr, int tickssize) {
         lastPrice = transaction.getPrice();
         int rv = rand.nextInt(tickssize);
-        boolean sb = rv <= 25 ? true : false;
+        boolean sb = rv <= 1 ? true : false;
         boolean sell = rand.nextBoolean();
         if (openPosition && sell) {
             if (sb) {
                 sell();
+                return 1;
             }
         } else {
             if (sb) {
                 openPosition = true;
                 numOfShares = (int) Math.floor(amount / lastPrice);
                 amount -= numOfShares * lastPrice;
+                return 1;
             }
         }
+
+        return 0;
     }
 
     protected void init() {

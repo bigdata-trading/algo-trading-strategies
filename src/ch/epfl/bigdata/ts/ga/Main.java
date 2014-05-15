@@ -1,9 +1,6 @@
 package ch.epfl.bigdata.ts.ga;
 
-import ch.epfl.bigdata.ts.pattern.fitness.DoubleBottom;
-import ch.epfl.bigdata.ts.pattern.fitness.DoubleTop;
-import ch.epfl.bigdata.ts.pattern.fitness.HeadAndShoulders;
-import ch.epfl.bigdata.ts.pattern.fitness.Rectangle;
+import ch.epfl.bigdata.ts.pattern.fitness.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +18,7 @@ public class Main {
 
         long time = System.currentTimeMillis();
         List<Training> strategies = new LinkedList<Training>();
+        //strategies.add(new Training(null, new RandomFirtness(numOfDays, startMoney, generationWindow, startData, time), startData, time));
         //strategies.add(new Training(DoubleBottom.getName(), DoubleBottom.getGeneRanges(), new DoubleBottom(numOfDays, startMoney, generationWindow, startData)));
         strategies.add(new Training(HeadAndShoulders.getGeneRanges(), new HeadAndShoulders(numOfDays, startMoney, generationWindow, startData, time), startData, time));
         strategies.add(new Training(Rectangle.getGeneRanges(), new Rectangle(numOfDays, startMoney, generationWindow, startData, time), startData, time));

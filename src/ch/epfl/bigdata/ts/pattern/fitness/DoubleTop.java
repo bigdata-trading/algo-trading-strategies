@@ -56,7 +56,7 @@ public class DoubleTop extends FitnessFunction {
 
         if (first) {
             numOfShares = (int) Math.floor(startingAmountOfMoney / lastPrice);
-            amount -= numOfShares * lastPrice;
+            amount = startingAmountOfMoney - numOfShares * lastPrice;
             first = false;
         }
 
@@ -158,11 +158,11 @@ public class DoubleTop extends FitnessFunction {
     public static List<Range> getGeneRanges() {
         List<Range> ranges = new LinkedList<Range>();
 
-        ranges.add(new Range(0, 0.1));
-        ranges.add(new Range(0, 0.1));
+        ranges.add(new Range(0.1, 1));
+        ranges.add(new Range(0.1, 1));
         ranges.add(new Range(0.1, 0.4));
         ranges.add(new Range(0.1, 0.4));
-        ranges.add(new Range(0, 40));
+        ranges.add(new Range(0, 50));
 
         /*ranges.add(new Range(0, 0.3));
         ranges.add(new Range(0, 0.3));
