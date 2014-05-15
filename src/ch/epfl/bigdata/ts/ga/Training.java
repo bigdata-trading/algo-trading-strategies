@@ -91,11 +91,6 @@ public class Training extends Thread {
                     chromosomes.add(chr);
                 }
 
-                HashMap<String, Range> geneRange = new HashMap<String, Range>();
-                for (int k = 0; k < range.size(); k++) {
-                    geneRange.put(Integer.toString(k), range.get(k));
-                }
-
                 fitnessFunction.setStartForData(startForData);
 
                 //out.println("Number of days for training: " + numOfDays + ", starting amount of money: " + startMoney + ", window for training: " + generationWindow + ", startData for trading: " + startData);
