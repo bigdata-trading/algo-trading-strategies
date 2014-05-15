@@ -10,8 +10,8 @@ public class RandomFirtness extends FitnessFunction {
 
     private Random rand = new Random();
 
-    public RandomFirtness(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public RandomFirtness(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        super(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 
     public void calcFitness(Chromosome chr, boolean logForViz) {
@@ -72,7 +72,7 @@ public class RandomFirtness extends FitnessFunction {
         return "Random";
     }
 
-    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData) {
-        return new RandomFirtness(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData);
+    public FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time) {
+        return new RandomFirtness(numOfDays, startingAmountOfMoney, numOfDaysInGeneration, startForData, time);
     }
 }
