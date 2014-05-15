@@ -15,9 +15,10 @@ public class HeadAndShoulders extends FitnessFunction {
 
     public static final int GENE_BOTTOM_SHOULDER = 0;
     public static final int GENE_SHOULDER_HEAD = 1;
-    public static final int GENE_PROTECT_BUY_GAIN = 2;
-    public static final int GENE_PROTECT_BUY_LOSS = 3;
-    public static final int GENE_TREND_STRENGTH = 4;
+    public static final int GENE_MAX_DIFF_BOTTOMS = 2;
+    public static final int GENE_PROTECT_BUY_GAIN = 3;
+    public static final int GENE_PROTECT_BUY_LOSS = 4;
+    public static final int GENE_TREND_STRENGTH = 5;
 
     private double shoulder1, shoulder2;
     private double head;
@@ -105,7 +106,7 @@ public class HeadAndShoulders extends FitnessFunction {
                 if (lastPrice > head) {
                     head = lastPrice;
                     hts = transaction.getTimestamp();
-                } else if (lastPrice >= bottom1) {
+                } else if (lastPrice >= bottom1 && lastPrice - bottom1 <= chr.getGenes().get(GENE_MAX_DIFF_BOTTOMS).getValue()) {
                     bottom2 = lastPrice;
                     bottom2Ts = lastTs;
                     b2ts = transaction.getTimestamp();
@@ -121,31 +122,31 @@ public class HeadAndShoulders extends FitnessFunction {
                     } else {
                         initPattern();
                     }
-                } else if (lastPrice < head) {
+                } else if (lastPrice - head >= chr.getGenes().get(GENE_SHOULDER_HEAD).getValue()) {
                     shoulder2 = lastPrice;
                     necklinea = (bottom2 - bottom1) / (bottom2Ts - bottom1Ts);
                     necklineb = bottom2 - bottom2Ts * necklinea;
                     sh2ts = transaction.getTimestamp();
                 }
             } else {
-                if (lastPrice > shoulder2) {
-                    if (lastPrice < head) {
-                        shoulder2 = lastPrice;
-                        sh2ts = transaction.getTimestamp();
-                    } else {
-                        initPattern();
+                    if (lastPrice > shoulder2) {
+                        if (lastPrice < head) {
+                            shoulder2 = lastPrice;
+                            sh2ts = transaction.getTimestamp();
+                        } else {
+                            initPattern();
+                        }
+                    } else if(lastPrice <= lastTs * necklinea + necklineb) {
+                        //sell
+                        openPosition = true;
+                        amount += numOfShares * lastPrice;
+                        numOfShares = 0;
+                        double avg = head - (bottom1 + bottom2) / 2;
+                        buyLoss = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
+                        buyGain = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
+                        toRet = 1;
+                        sold = 1;
                     }
-                } else if (lastPrice <= lastTs * necklinea + necklineb) {
-                    //sell
-                    openPosition = true;
-                    amount += numOfShares * lastPrice;
-                    numOfShares = 0;
-                    double avg = head - (bottom1 + bottom2) / 2;
-                    buyLoss = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
-                    buyGain = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
-                    toRet = 1;
-                    sold = 1;
-                }
             }
         }
 
@@ -206,6 +207,7 @@ public class HeadAndShoulders extends FitnessFunction {
 
         ranges.add(new Range(0, 0.4));
         ranges.add(new Range(0, 0.3));
+        ranges.add(new Range(0, 0.2));
         ranges.add(new Range(0.4, 1));
         ranges.add(new Range(0.1, 0.4));
         ranges.add(new Range(0, 50));
