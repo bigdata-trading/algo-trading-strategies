@@ -106,8 +106,8 @@ public abstract class FitnessFunction {
         this.startForData = startForData;
     }
 
-    public void increaseDay() {
-        startForData++;
+    public void increaseDay(int increase) {
+        startForData += increase;
     }
 
     protected abstract void init();

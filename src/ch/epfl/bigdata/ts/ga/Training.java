@@ -17,8 +17,8 @@ import java.util.*;
 
 public class Training extends Thread {
 
-    private static int NUM_OF_CHROMOSOMES = 20;
-    public static int NUM_OF_ITERATIONS = 5;
+    private static int NUM_OF_CHROMOSOMES = 100;
+    public static int NUM_OF_ITERATIONS = 10;
 
     private List<Range> range = null;
     private List<Chromosome> bestChromosomes = new LinkedList<Chromosome>();
@@ -52,6 +52,9 @@ public class Training extends Thread {
             }
 
             out.append("NUM_OF_CHROMOSOMES = " + NUM_OF_CHROMOSOMES + "\n");
+            out.append("NUM_OF_GENERATIONS = " + GeneticAlgorithm.NUM_OF_GENERATIONS + "\n");
+            out.append("NUM_OF_GENERATIONS_IN_WINDOW = " + GeneticAlgorithm.NUM_OF_GENERATIONS_IN_WINDOW + "\n");
+            out.append("WINDOW_INCREASE = " + GeneticAlgorithm.WINDOW_MOVE + "\n\n");
 
             List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 

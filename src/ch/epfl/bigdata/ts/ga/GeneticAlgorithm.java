@@ -11,12 +11,13 @@ import ch.epfl.bigdata.ts.pattern.fitness.FitnessFunction;
 
 public class GeneticAlgorithm {
     //TODO: find the best values
-    static int NUM_OF_GENERATIONS = 100 ;
-    static int NUM_OF_GENERATIONS_IN_WINDOW = 4;
-    static double SELECTIVITY = 0.5;//0.5;
-    static int NUM_ELITE = 9; //7;
-    static double CROSSOVER_PROBABILITY = 0.8;//0.6;
-    static double MUTATION_PROBABILITY = 0.05;//0.01;
+    public static int NUM_OF_GENERATIONS = 100;
+    public static int NUM_OF_GENERATIONS_IN_WINDOW = 4;
+    public static double SELECTIVITY = 0.5;//0.5;
+    public static int NUM_ELITE = 9; //7;
+    public static double CROSSOVER_PROBABILITY = 0.8;//0.6;
+    public static double MUTATION_PROBABILITY = 0.05;//0.01;
+    public static int WINDOW_MOVE = 1;
 
     public static Chromosome run(List<Chromosome> chromosomes, HashMap<String, Range> geneRange, FitnessFunction fitnessFunc, SelectionMethod selMethod,
                                  CrossoverMethod crossMethod, MutationMethod mutatMethod) {
@@ -33,7 +34,7 @@ public class GeneticAlgorithm {
             System.out.println("size after " + population.getChromosomes().size());
             fitnessFunc.evaluate(population);
             if ((i + 1) % NUM_OF_GENERATIONS_IN_WINDOW == 0) {
-                fitnessFunc.increaseDay();
+                fitnessFunc.increaseDay(WINDOW_MOVE);
             }
             //System.out.println("Population size " + population.getChromosomes().size());
         }
