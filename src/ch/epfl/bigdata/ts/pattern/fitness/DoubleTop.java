@@ -67,6 +67,7 @@ public class DoubleTop extends FitnessFunction {
                 toRet = 1;
                 t2ts = bts = -1;
                 t1ts = transaction.getTimestamp();
+                bought = 1;
             } else if (lastPrice <= buyGain) {
                 top1 = top2;
                 buy();
@@ -77,6 +78,7 @@ public class DoubleTop extends FitnessFunction {
                     bts = transaction.getTimestamp();
                 }
                 t1ts = transaction.getTimestamp();
+                bought = 1;
             }
         } else {
             if (top1 == -1) {

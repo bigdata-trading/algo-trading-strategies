@@ -71,7 +71,6 @@ public class DoubleBottom extends FitnessFunction {
                 sellGain = lastPrice + chr.getGenes().get(GENE_PROTECT_SELL_GAIN).getValue() * avg;
                 toRet = 1;
                 bought = 1;
-
             } else {
                 if (lastPrice <= sellLoss) {
                     bottom1 = lastPrice;

@@ -77,6 +77,7 @@ public class HeadAndShoulders extends FitnessFunction {
                 buy();
                 sh1ts = b1ts = hts = b2ts = sh2ts = -1;
                 toRet = 1;
+                bought = 1;
             }
         } else {
             if (shoulder1 == -1) {
