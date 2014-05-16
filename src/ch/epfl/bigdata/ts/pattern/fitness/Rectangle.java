@@ -85,7 +85,7 @@ public class Rectangle extends FitnessFunction {
                 if (lastPrice < bottom1) {
                     bottom1 = lastPrice;
                     b1ts = transaction.getTimestamp();
-                } else if (Math.abs(top1 - lastPrice) <= chr.getGenes().get(GENE_DIFF_TOPS).getValue()) {
+                } else if (Math.abs(top1 - lastPrice) <= chr.getGenes().get(GENE_DIFF_TOPS).getValue() && lastPrice - bottom1 >= chr.getGenes().get(GENE_DIST_EQUAL_LEVELS).getValue()) {
                     top2 = lastPrice;
                     t2ts = transaction.getTimestamp();
                 }
@@ -101,7 +101,7 @@ public class Rectangle extends FitnessFunction {
                             t1ts = transaction.getTimestamp();
                         }
                     }
-                } else if (Math.abs(bottom1 - lastPrice) <= chr.getGenes().get(GENE_DIFF_TOPS).getValue()) {
+                } else if (Math.abs(bottom1 - lastPrice) <= chr.getGenes().get(GENE_DIFF_TOPS).getValue() && top1 - lastPrice >= chr.getGenes().get(GENE_DIST_EQUAL_LEVELS).getValue()) {
                     bottom2 = lastPrice;
                     b2ts = transaction.getTimestamp();
                 }
@@ -182,7 +182,7 @@ public class Rectangle extends FitnessFunction {
     public static List<Range> getGeneRanges() {
         List<Range> ranges = new LinkedList<Range>();
 
-        ranges.add(new Range(0.25, 0.4));
+        ranges.add(new Range(0.2, 0.4));
         ranges.add(new Range(0.3, 0.6));
         ranges.add(new Range(0.5, 1));
         ranges.add(new Range(0.1, 0.4));
