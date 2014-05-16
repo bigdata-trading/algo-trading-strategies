@@ -49,15 +49,17 @@ public class Evaluation extends Thread {
                 out.append("Fitness: " + chr.getFitness() + "\n");
                 out.append("Number of transactions: " + chr.getNumberOfTransactions() + "\n");
                 out.append("This took " + duration + " milliseconds" + "\n");
-                out.append("EBD OF ITERATION #" + i + "\n\n");
+                out.append("END OF ITERATION #" + i + "\n\n");
             }
 
             double sum = 0;
+            double sumTransactions = 0;
             double bestFitness = evalResults.get(0).getFitness();
             bestChromosome = evalResults.get(0);
 
             for (int i = 0; i < evalResults.size(); i++) {
                 sum += evalResults.get(i).getFitness();
+                sumTransactions += evalResults.get(i).getNumberOfTransactions();
                 if (bestFitness < evalResults.get(i).getFitness()) {
                     bestFitness = evalResults.get(i).getFitness();
                     bestChromosome = evalResults.get(i);
@@ -65,6 +67,7 @@ public class Evaluation extends Thread {
             }
 
             out.append("AVERAGE CHROMOSOME FITNESS FOR " + chrsToEval.size() + " iterations is: " + sum / evalResults.size() + "\n");
+            out.append("AVERAGE CHROMOSOME TRANSACTIONS FOR " + chrsToEval.size() + " iterations is: " + sumTransactions / evalResults.size() + "\n");
 
             if (out != null) out.close();
 
