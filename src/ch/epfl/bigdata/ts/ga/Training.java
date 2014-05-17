@@ -17,7 +17,7 @@ import java.util.*;
 
 public class Training extends Thread {
 
-    private static int NUM_OF_CHROMOSOMES = 100;
+    public static int NUM_OF_CHROMOSOMES = 50;
     public static int NUM_OF_ITERATIONS = 10;
 
     private List<Range> range = null;

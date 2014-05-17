@@ -30,6 +30,12 @@ public class Evaluation extends Thread {
 
         try {
             out = new FileWriter(Utils.pathToEvaluation + strategy.getName() + "_evaluation_" + time + ".txt", true);
+            out.append("NUM_OF_CHROMOSOMES = " + Training.NUM_OF_CHROMOSOMES + "\n");
+            out.append("NUM_OF_GENERATIONS = " + GeneticAlgorithm.NUM_OF_GENERATIONS + "\n");
+            out.append("NUM_OF_GENERATIONS_IN_WINDOW = " + GeneticAlgorithm.NUM_OF_GENERATIONS_IN_WINDOW + "\n");
+            out.append("WINDOW_INCREASE = " + GeneticAlgorithm.WINDOW_MOVE + "\n");
+            out.append("Generations in one window = " + Main.generationWindow + "\n\n");
+
 
 
             long startTime = System.currentTimeMillis();

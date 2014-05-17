@@ -2,10 +2,14 @@ package ch.epfl.bigdata.ts.ga;
 
 import ch.epfl.bigdata.ts.pattern.fitness.*;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class Main {
+
+    public static int generationWindow = 1;
 
 
     public static void main(String[] args) {
@@ -13,12 +17,11 @@ public class Main {
         //Training
         int numOfDays = 30;
         int startMoney = 3000;
-        int generationWindow = 5;
         int startData = 0;
 
         long time = System.currentTimeMillis();
         List<Training> strategies = new LinkedList<Training>();
-        //strategies.add(new Training(null, new RandomFirtness(numOfDays, startMoney, generationWindow, startData, time), startData, time));
+//        strategies.add(new Training(null, new RandomFirtness(numOfDays, startMoney, generationWindow, startData, time), startData, time));
         //strategies.add(new Training(DoubleBottom.getName(), DoubleBottom.getGeneRanges(), new DoubleBottom(numOfDays, startMoney, generationWindow, startData)));
         strategies.add(new Training(HeadAndShoulders.getGeneRanges(), new HeadAndShoulders(numOfDays, startMoney, generationWindow, startData, time), startData, time));
         strategies.add(new Training(Rectangle.getGeneRanges(), new Rectangle(numOfDays, startMoney, generationWindow, startData, time), startData, time));
