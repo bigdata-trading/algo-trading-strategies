@@ -54,7 +54,8 @@ public class Training extends Thread {
             out.append("NUM_OF_CHROMOSOMES = " + NUM_OF_CHROMOSOMES + "\n");
             out.append("NUM_OF_GENERATIONS = " + GeneticAlgorithm.NUM_OF_GENERATIONS + "\n");
             out.append("NUM_OF_GENERATIONS_IN_WINDOW = " + GeneticAlgorithm.NUM_OF_GENERATIONS_IN_WINDOW + "\n");
-            out.append("WINDOW_INCREASE = " + GeneticAlgorithm.WINDOW_MOVE + "\n\n");
+            out.append("WINDOW_INCREASE = " + GeneticAlgorithm.WINDOW_MOVE + "\n");
+            out.append("Generations in one window = " + fitnessFunction.getNumOfDaysInGeneration() + "\n\n");
 
             List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 

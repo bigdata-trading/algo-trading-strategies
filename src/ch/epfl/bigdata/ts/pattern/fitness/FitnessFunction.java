@@ -117,4 +117,8 @@ public abstract class FitnessFunction {
     public abstract String getName();
 
     public abstract FitnessFunction constructorWrapper(int numOfDays, int startingAmountOfMoney, int numOfDaysInGeneration, int startForData, long time);
+
+    public int getNumOfDaysInGeneration() {
+        return numOfDaysInGeneration;
+    }
 }
