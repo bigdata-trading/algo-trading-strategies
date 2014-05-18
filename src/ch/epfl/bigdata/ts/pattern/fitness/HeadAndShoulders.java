@@ -107,10 +107,12 @@ public class HeadAndShoulders extends FitnessFunction {
                 if (lastPrice > head) {
                     head = lastPrice;
                     hts = transaction.getTimestamp();
-                } else if (lastPrice >= bottom1 && lastPrice - bottom1 <= chr.getGenes().get(GENE_MAX_DIFF_BOTTOMS).getValue()) {
-                    bottom2 = lastPrice;
-                    bottom2Ts = lastTs;
-                    b2ts = transaction.getTimestamp();
+                } else if (lastPrice >= bottom1) {
+                    if(lastPrice - bottom1 <= chr.getGenes().get(GENE_MAX_DIFF_BOTTOMS).getValue()) {
+                        bottom2 = lastPrice;
+                        bottom2Ts = lastTs;
+                        b2ts = transaction.getTimestamp();
+                    }
                 } else {
                     initPattern();
                 }
@@ -123,31 +125,31 @@ public class HeadAndShoulders extends FitnessFunction {
                     } else {
                         initPattern();
                     }
-                } else if (lastPrice - head >= chr.getGenes().get(GENE_SHOULDER_HEAD).getValue()) {
+                } else if (((head - lastPrice) >= chr.getGenes().get(GENE_SHOULDER_HEAD).getValue()) && (lastPrice - bottom1 >= chr.getGenes().get(GENE_BOTTOM_SHOULDER).getValue())) {
                     shoulder2 = lastPrice;
                     necklinea = (bottom2 - bottom1) / (bottom2Ts - bottom1Ts);
                     necklineb = bottom2 - bottom2Ts * necklinea;
                     sh2ts = transaction.getTimestamp();
                 }
             } else {
-                    if (lastPrice - head >= chr.getGenes().get(GENE_SHOULDER_HEAD).getValue()){
-                        if (lastPrice < head) {
-                            shoulder2 = lastPrice;
-                            sh2ts = transaction.getTimestamp();
-                        } else {
-                            initPattern();
-                        }
-                    } else if(lastPrice <= lastTs * necklinea + necklineb) {
-                        //sell
-                        openPosition = true;
-                        amount += numOfShares * lastPrice;
-                        numOfShares = 0;
-                        double avg = head - (bottom1 + bottom2) / 2;
-                        buyLoss = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
-                        buyGain = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
-                        toRet = 1;
-                        sold = 1;
-                    }
+                if(lastPrice > shoulder2) {
+                  //  if (head - lastPrice >= chr.getGenes().get(GENE_SHOULDER_HEAD).getValue()) {
+                        shoulder2 = lastPrice;
+                        sh2ts = transaction.getTimestamp();
+                  //  } else {
+                  //      initPattern();
+                  //  }
+                } else if(lastPrice <= lastTs * necklinea + necklineb) {
+                    //sell
+                    openPosition = true;
+                    amount += numOfShares * lastPrice;
+                    numOfShares = 0;
+                    double avg = head - (bottom1 + bottom2) / 2;
+                    buyLoss = lastPrice + chr.getGenes().get(GENE_PROTECT_BUY_LOSS).getValue() * avg;
+                    buyGain = lastPrice - chr.getGenes().get(GENE_PROTECT_BUY_GAIN).getValue() * avg;
+                    toRet = 1;
+                    sold = 1;
+                 }
             }
         }
 
