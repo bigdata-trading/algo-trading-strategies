@@ -9,9 +9,6 @@
 
 	<script type="text/javascript">
 	
-	var timestamps = [];
-	var prices = [];
-	
 	var points = [];
 	
 	var chart;
@@ -31,17 +28,16 @@
 							// set up the updating of the chart each second
 							var series = this.series[0];
 							setInterval(function() {
-								for (k=0;k<5;k++){
+							for (k=0;k<10;k++){
 									series.addPoint(points[loaded++]);
 								}
 								series.addPoint(points[loaded++], true, true);
-							}, 	50);
-							
+							}, 	1);
 						}
 					}
 				},
 				title: {
-					text: 'Head And Shoulders'
+					text: 'Rectangle'
 				},
 				xAxis: {
 					title: {
@@ -60,12 +56,12 @@
 				
 				series: [{
 				turboThreshold: 0,
-				name: "Head And Shoulders",
+				name: "Rectangle",
 					 data: (function() {
                     // generate an array of random data
                     var data = [];
     
-                    for (loaded = 0; loaded <= 2000; loaded++) {
+                    for (loaded = 1; loaded <= 15000; loaded++) {
                         data.push(points[loaded]);
                     }
                     return data;
@@ -76,41 +72,37 @@
 		}
 		
 	
-	
-		$.get("statHeadShoulders.csv", function(data){	
+		$.get("r.csv", function(data){	
 			var lines = data.split("\n");
 			var j = 0;
 			for (i = 0; i < lines.length; i++) {
 				var parts = lines[i].split(",");
-				
-				if (j != 0){
-					if (parseInt(parts[0]) === timestamps[j-1]) continue;
-				}
-				
+		
 				var en = false;
 				var sym = 'circle';
 				var color = 'blue';
-				if (parseInt(parts[0]) == parseInt(parts[2]) || parseInt(parts[0]) == parseInt(parts[6])){
+				if (parseInt(parts[0]) == parseInt(parts[2])){
 					en = true;
 					color = 'yellow';
-					}
-				if ( parseInt(parts[0]) == parseInt(parts[3]) || parseInt(parts[0]) == parseInt(parts[5])){
-					en = true;
-					color = 'green';
-					}
-				if (parseInt(parts[0]) == parseInt(parts[4])){
+				} else if ( parseInt(parts[0]) == parseInt(parts[3])){
 					en = true;
 					color = 'red';
+				} else if (parseInt(parts[0]) == parseInt(parts[4])){
+					en = true;
+					color = 'black';
+				} else if (parseInt(parts[0]) == parseInt(parts[5])){
+					en = true;
+					color = 'green';
 				}
 				
 				var chAmountAndShares = false;
-				if (parseInt(parts[7]) == 1){
+				if (parseInt(parts[6]) == 1){
 					en = true;
 					color = 'orange';
 					sym = 'square';
 					chAmountAndShares = true;
 				}
-				if (parseInt(parts[8]) == 1){
+				if (parseInt(parts[7]) == 1){
 					en = true;
 					color = 'violet';
 					sym = 'square';
@@ -118,12 +110,13 @@
 				}
 				
 				if (i == 0 || chAmountAndShares == true){
-					$('#amount').text('Money ' + parseInt(parts[11]));
-					$('#shares').text('Shares ' + parseInt(parts[12]));
+					$('#amount').text('Money ' + parseInt(parts[10]));
+					$('#shares').text('Shares ' + parseInt(parts[11]));
 				}
-				
+				j++;
 				points[j] = {
-					x:parseInt(parts[0]),
+					//x:parseInt(parts[0]),
+					x:j,
 					y:parseFloat(parts[1]),
 					marker: {
 						enabled: en,
@@ -131,14 +124,6 @@
 						fillColor: color
 					}
 				};
-				
-				timestamps[j] = parseInt(parts[0]);
-				prices[j] = parseFloat(parts[1]);
-				
-				j++;
-				//$('#char').text(prices[j]);
-				//if (j==10000) break;
-				
 			}
 			drawChart();
 		});

@@ -9,20 +9,10 @@
 
 	<script type="text/javascript">
 	
-	var timestamps = [];
-	var prices = [];
-	var b1 = [];
-	var b2 = [];
-	var top = [];
-	var bought = [];
-	var sold = [];
-	var sellGain = [];
-	var sellLoss = [];
-	var jot = [];
-	
 	var points = [];
 	
-	var chart;var loaded=0;
+	var chart;
+	var loaded=0;
 	
 	$(function(){
 		function drawChart(){
@@ -38,16 +28,16 @@
 							// set up the updating of the chart each second
 							var series = this.series[0];
 							setInterval(function() {
-							for (k=0;k<5;k++){
+							for (k=0;k<10;k++){
 									series.addPoint(points[loaded++]);
 								}
 								series.addPoint(points[loaded++], true, true);
-							}, 	50);
+							}, 	1);
 						}
 					}
 				},
 				title: {
-					text: 'Double Bottom'
+					text: 'Double Top'
 				},
 				xAxis: {
 					title: {
@@ -66,12 +56,12 @@
 				
 				series: [{
 				turboThreshold: 0,
-				name: "DoubleBottomStrategy",
+				name: "Double Top",
 					 data: (function() {
                     // generate an array of random data
                     var data = [];
     
-                    for (loaded = 0; loaded <= 2000; loaded++) {
+                    for (loaded = 1; loaded <= 5000; loaded++) {
                         data.push(points[loaded]);
                     }
                     return data;
@@ -82,17 +72,12 @@
 		}
 		
 	
-	
-		$.get("db-eval-log-viz.csv", function(data){	
+		$.get("dt.csv", function(data){	
 			var lines = data.split("\n");
 			var j = 0;
 			for (i = 0; i < lines.length; i++) {
 				var parts = lines[i].split(",");
-				
-				if (j != 0){
-					if (parseInt(parts[0]) === timestamps[j-1]) continue;
-				}
-				
+		
 				var en = false;
 				var sym = 'circle';
 				var color = 'blue';
@@ -125,9 +110,10 @@
 					$('#amount').text('Money ' + parseInt(parts[9]));
 					$('#shares').text('Shares ' + parseInt(parts[10]));
 				}
-				
+				j++;
 				points[j] = {
-					x:parseInt(parts[0]),
+					//x:parseInt(parts[0]),
+					x:j,
 					y:parseFloat(parts[1]),
 					marker: {
 						enabled: en,
@@ -135,19 +121,6 @@
 						fillColor: color
 					}
 				};
-				
-				timestamps[j] = parseInt(parts[0]);
-				prices[j] = parseFloat(parts[1]);
-				b1[j] = parts[2];
-				b2[j] = parts[3];
-				top[j] = parts[4];
-				bought[j] = parts[5];
-				sold[j] = parts[6];
-				sellGain[j] = parts[7];
-				sellLoss[j] = parts[8];
-				j++;
-				//$('#char').text(prices[j]);
-				//if (j==10000) break;
 			}
 			drawChart();
 		});
